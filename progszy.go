@@ -88,7 +88,7 @@ func ProxyHandlerWith(cache Cache) func(http.ResponseWriter, *http.Request) {
 			switch r.Method {
 			case "GET":
 				// w.WriteHeader(200) // TODO I'm pretty sure 200 is the default?
-				// TODO Would be good to set Content-Length header - but we don't know it until after the Copy - hide the reader inside Cache.Get?
+				// TODO Would be good to set Content-Length header - but we don't know it until after the Copy - using the cacheRecord would give us this.
 				length, err := io.Copy(w, cr)
 				if err != nil {
 					log.Printf("io.Copy error during GET: %v\n", err)
@@ -116,16 +116,15 @@ func ProxyHandlerWith(cache Cache) func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
+		// TODO(js) Get reject rules from header.
+		// TODO(js) Cache regex rules?
+		// TODO(js) Time creation/compilation of regex rules.
+
 		// Cache miss - fetch and cache.
 		w.Header().Set("X-Cache", "MISS")
 		// log.Println("cache miss")
 
-		// TODO Consider rate limiting - per destination host.
-		// See also https://github.com/internetarchive/heritrix3/wiki/Politeness-parameters
-		// Currently I'm considering doing this in the client, so it can act differently for hits/misses.
-
 		// Build the request.
-		// req, err := http.NewRequest("GET", uri, nil)
 		req, err := retryablehttp.NewRequest("GET", uri, nil)
 		if err != nil {
 			log.Printf("http.NewRequest error: %v\n", err)
@@ -166,13 +165,14 @@ func ProxyHandlerWith(cache Cache) func(http.ResponseWriter, *http.Request) {
 		}
 		if lr.N == 0 {
 			// Exceeded max body size.
-			log.Println("response too big error")
-			m := fmt.Sprintf("Body exceeds maximum size (%s)", byteCountDecimal(maxBodySize))
+			max := byteCountDecimal(maxBodySize)
+			log.Printf("response too big error (max %s)\n", max)
+			m := fmt.Sprintf("Body exceeds maximum size (%s)", max)
 			http.Error(w, m, http.StatusInternalServerError)
 			return
 		}
 
-		// Check status code is good - we only accept 200 ok.
+		// Check status code is good - we only accept 200 ok (the client handles redirects)
 		if resp.StatusCode != 200 {
 			// Upstream error.
 			log.Printf("upstream error: non-200 status code (%d)\n", resp.StatusCode)
@@ -217,7 +217,6 @@ func newClient() (*retryablehttp.Client, error) {
 	// TODO Note that because we use a retrying client, this means outgoing HTTP requests can now take a longer time.
 	// Do we need to make the HTTP server and the requesting client have longer timeouts to handle this? Review this.
 
-	// client := &http.Client{}
 	client := retryablehttp.NewClient()
 	// client.Logger = nil
 	return client, nil

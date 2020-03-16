@@ -77,35 +77,35 @@ var _ = Describe("Cache", func() {
 
 	})
 
-	Describe("MemCache methods", func() {
+	// Describe("MemCache methods", func() {
 
-		It("should return a 'miss' error for an unknown URL", func() {
-			c := progszy.NewMemCache()
-			_, _, err := c.Get("http://example.com/")
-			Expect(err).To(Equal(progszy.ErrCacheMiss))
-			err = c.CloseAll()
-			Expect(err).To(BeNil())
-		})
+	// 	It("should return a 'miss' error for an unknown URL", func() {
+	// 		c := progszy.NewMemCache()
+	// 		_, _, err := c.Get("http://example.com/")
+	// 		Expect(err).To(Equal(progszy.ErrCacheMiss))
+	// 		err = c.CloseAll()
+	// 		Expect(err).To(BeNil())
+	// 	})
 
-		It("should put things into the cache and get them out again", func() {
+	// 	It("should put things into the cache and get them out again", func() {
 
-			content := []byte("fake-content")
+	// 		content := []byte("fake-content")
 
-			c := progszy.NewMemCache()
-			err := c.Put("http://example.com/", "text/html", "", "", content, 0)
-			Expect(err).To(BeNil())
-			m, r, err := c.Get("http://example.com/")
-			Expect(err).To(BeNil())
-			Expect(m).To(Equal("text/html"))
-			defer r.Close()
-			b, err := ioutil.ReadAll(r)
-			Expect(err).To(BeNil())
-			Expect(b).To(Equal(content))
-			err = c.CloseAll()
-			Expect(err).To(BeNil())
-		})
+	// 		c := progszy.NewMemCache()
+	// 		err := c.Put("http://example.com/", "text/html", "", "", content, 0)
+	// 		Expect(err).To(BeNil())
+	// 		m, r, err := c.Get("http://example.com/")
+	// 		Expect(err).To(BeNil())
+	// 		Expect(m).To(Equal("text/html"))
+	// 		defer r.Close()
+	// 		b, err := ioutil.ReadAll(r)
+	// 		Expect(err).To(BeNil())
+	// 		Expect(b).To(Equal(content))
+	// 		err = c.CloseAll()
+	// 		Expect(err).To(BeNil())
+	// 	})
 
-	})
+	// })
 
 	Describe("SqliteCache methods", func() {
 

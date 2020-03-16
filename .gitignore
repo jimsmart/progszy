@@ -7,4 +7,5 @@ coverage.out
 *.sqlite
 cache/
 test/
-
+cmd/progszy/progszy
+cmd/progszy/cache/

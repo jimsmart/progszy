@@ -36,6 +36,8 @@ import (
 // 	}
 // }
 
+const fileExt = ".sqlite"
+
 type SqliteCache struct {
 	path           string
 	mu             sync.RWMutex
@@ -209,7 +211,7 @@ func (c *SqliteCache) createDB(bd string) (*sql.DB, error) {
 	}
 
 	// No, we must make a new db.
-	filename = filepath.Join(c.path, bd+"-"+timestamp()+".sqlite")
+	filename = filepath.Join(c.path, bd+"-"+timestamp()+fileExt)
 	db, err = createDB(filename)
 	if err != nil {
 		return nil, err
@@ -223,7 +225,7 @@ func (c *SqliteCache) createDB(bd string) (*sql.DB, error) {
 
 func findSqliteFile(path, bd string) (string, error) {
 
-	files, err := filterFiles(path, bd, ".sqlite")
+	files, err := filterFiles(path, bd, fileExt)
 	if err != nil {
 		return "", err
 	}
