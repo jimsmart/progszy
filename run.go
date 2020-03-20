@@ -39,11 +39,15 @@ func Run(addr, cachePath string) {
 		}
 	}()
 
+	// Wait for interrupt signal.
 	<-stop
 
 	logger.Println("\nStopping the server...")
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
 	h.Shutdown(ctx)
+
 	err := cache.CloseAll()
 	if err != nil {
 		logger.Printf("Error closing cache %v\n", err)

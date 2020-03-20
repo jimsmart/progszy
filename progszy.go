@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	retryablehttp "github.com/hashicorp/go-retryablehttp"
@@ -45,6 +46,8 @@ const maxBodySize = 64 * 1024 * 1024 // 64mb
 
 func ProxyHandlerWith(cache Cache) func(http.ResponseWriter, *http.Request) {
 
+	rulesCache := newRulesMap()
+
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		// TODO We do not handle ETag header. See https://www.keycdn.com/blog/http-cache-headers
@@ -68,8 +71,9 @@ func ProxyHandlerWith(cache Cache) func(http.ResponseWriter, *http.Request) {
 		// // fmt.Printf("%q", dump)
 
 		// We only handle GET & HEAD requests for now.
-		if r.Method != "GET" && r.Method != "HEAD" {
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		if r.Method != http.MethodGet && r.Method != http.MethodHead {
+			m := fmt.Sprintf("Method not allowed (%s)", r.Method)
+			http.Error(w, m, http.StatusMethodNotAllowed)
 			return
 		}
 
@@ -86,7 +90,7 @@ func ProxyHandlerWith(cache Cache) func(http.ResponseWriter, *http.Request) {
 			defer cr.Close()
 			w.Header().Set("Content-Type", mime)
 			switch r.Method {
-			case "GET":
+			case http.MethodGet:
 				// w.WriteHeader(200) // TODO I'm pretty sure 200 is the default?
 				// TODO Would be good to set Content-Length header - but we don't know it until after the Copy - using the cacheRecord would give us this.
 				length, err := io.Copy(w, cr)
@@ -97,7 +101,7 @@ func ProxyHandlerWith(cache Cache) func(http.ResponseWriter, *http.Request) {
 					return
 				}
 				log.Printf("decompressed content size %s", byteCountDecimal(length))
-			case "HEAD":
+			case http.MethodHead:
 				// w.WriteHeader(200) // TODO I'm pretty sure 200 is the default?
 				length, err := io.Copy(ioutil.Discard, cr)
 				if err != nil {
@@ -125,7 +129,7 @@ func ProxyHandlerWith(cache Cache) func(http.ResponseWriter, *http.Request) {
 		// log.Println("cache miss")
 
 		// Build the request.
-		req, err := retryablehttp.NewRequest("GET", uri, nil)
+		req, err := retryablehttp.NewRequest(http.MethodGet, uri, nil)
 		if err != nil {
 			log.Printf("http.NewRequest error: %v\n", err)
 			http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
@@ -172,7 +176,7 @@ func ProxyHandlerWith(cache Cache) func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		// Check status code is good - we only accept 200 ok (the client handles redirects)
+		// Check status code is good - we only accept 200 ok (the client handles redirects).
 		if resp.StatusCode != 200 {
 			// Upstream error.
 			log.Printf("upstream error: non-200 status code (%d)\n", resp.StatusCode)
@@ -182,13 +186,36 @@ func ProxyHandlerWith(cache Cache) func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		// TODO Check page body against reject rules.
+		// Check page body against reject rules.
 
+		// TODO(js) Note: if a page already exists in the cache, reject rules are not applied. Document this.
+		// TODO(js) But perhaps reject rules should be applied there also? Perhaps causing a resource to be evicted from the cache?
+
+		rejectRulesHeaders := r.Header["X-Cache-Reject"]
+		// log.Printf("Reject rules %v", rejectRulesHeaders)
+
+		rules, err := rulesCache.getAll(rejectRulesHeaders)
+		if err != nil {
+			m := fmt.Sprintf("Unable to compile X-Cache-Reject pattern: %v", err)
+			http.Error(w, m, http.StatusInternalServerError)
+			return
+		}
+
+		for _, re := range rules {
+			// Abort the request if any rule matches.
+			if re.Match(body) {
+				m := fmt.Sprintf("Content rejected by match: %s", re.String())
+				http.Error(w, m, http.StatusPreconditionFailed)
+				return
+			}
+		}
+
+		// Get metadata headers.
 		mime = resp.Header.Get("Content-Type")
 		etag := resp.Header.Get("ETag")
 		lastMod := resp.Header.Get("Last-Modified")
 
-		// Put it in the cache.
+		// Put asset in the cache.
 		err = cache.Put(uri, mime, etag, lastMod, body, responseTime)
 		if err != nil {
 			log.Printf("cache.Put error: %v\n", err)
@@ -250,12 +277,21 @@ func copyHeaders(dst, src http.Header) {
 }
 
 func shouldCopyHeader(headerKey string) bool {
-	switch http.CanonicalHeaderKey(headerKey) {
+	key := http.CanonicalHeaderKey(headerKey)
+	switch key {
 	case "Accept-Encoding":
 		// http.Client handles this itself.
-		// If we copy it across, and it says gzip (it will),
+		// If we copy it across, and it says gzip (it will do),
 		// then we have to manually handle gzip decoding.
 		return false
+		// case "Host":
+		// 	// This is an artefact of HTTPS proxying.
+		// 	// TODO(js) Needed?
+		// 	return false
 	}
-	return true
+
+	// TODO(js) Perhaps we should have a more precise filter, for specific X- headers? Arguably, it's more complex and harder to maintain. So let's leave this unless it causes an issue.
+
+	// We copy remaining keys, if they are not special control headers.
+	return !strings.HasPrefix(key, "X-")
 }

@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	// Import Sqlite db driver.
 	_ "github.com/mattn/go-sqlite3"
 )
 

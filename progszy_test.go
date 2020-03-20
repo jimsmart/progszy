@@ -1,6 +1,7 @@
 package progszy_test
 
 import (
+	"crypto/tls"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 	"strconv"
 
 	"github.com/jimsmart/progszy"
+	goproxy "gopkg.in/elazarl/goproxy.v1"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -62,6 +64,33 @@ var _ = Describe("Progszy", func() {
 
 		defer resp.Body.Close()
 
+		Expect(resp.StatusCode).To(Equal(http.StatusOK))
+
+		body, err := ioutil.ReadAll(resp.Body)
+		Expect(err).To(BeNil())
+		Expect(body).To(ContainSubstring("Books"))
+
+		ch := resp.Header.Get("X-Cache")
+		Expect(ch).To(Equal("MISS"))
+
+		c.CloseIdleConnections()
+	})
+
+	XIt("should proxy HTTPS requests", func() {
+		// fmt.Println(server.URL)
+
+		// TODO This test should use a local test HTTP server?
+
+		c, err := newProxyClient(server.URL)
+		Expect(err).To(BeNil())
+
+		resp, err := c.Get("https://books.toscrape.com")
+		Expect(err).To(BeNil())
+
+		defer resp.Body.Close()
+
+		Expect(resp.StatusCode).To(Equal(http.StatusOK))
+
 		body, err := ioutil.ReadAll(resp.Body)
 		Expect(err).To(BeNil())
 		Expect(body).To(ContainSubstring("Books"))
@@ -85,6 +114,8 @@ var _ = Describe("Progszy", func() {
 
 		defer resp1.Body.Close()
 
+		Expect(resp1.StatusCode).To(Equal(http.StatusOK))
+
 		body1, err := ioutil.ReadAll(resp1.Body)
 		Expect(err).To(BeNil())
 		Expect(body1).To(ContainSubstring("Books"))
@@ -96,6 +127,8 @@ var _ = Describe("Progszy", func() {
 		Expect(err).To(BeNil())
 
 		defer resp2.Body.Close()
+
+		Expect(resp2.StatusCode).To(Equal(http.StatusOK))
 
 		body2, err := ioutil.ReadAll(resp2.Body)
 		Expect(err).To(BeNil())
@@ -121,6 +154,8 @@ var _ = Describe("Progszy", func() {
 
 		defer resp1.Body.Close()
 
+		Expect(resp1.StatusCode).To(Equal(http.StatusOK))
+
 		body1, err := ioutil.ReadAll(resp1.Body)
 		Expect(err).To(BeNil())
 		Expect(body1).To(ContainSubstring("Books"))
@@ -132,6 +167,8 @@ var _ = Describe("Progszy", func() {
 		Expect(err).To(BeNil())
 
 		defer resp2.Body.Close()
+
+		Expect(resp2.StatusCode).To(Equal(http.StatusOK))
 
 		length, err := strconv.Atoi(resp2.Header.Get("Content-Length"))
 		Expect(err).To(BeNil())
@@ -156,6 +193,8 @@ var _ = Describe("Progszy", func() {
 
 		defer resp1.Body.Close()
 
+		Expect(resp1.StatusCode).To(Equal(http.StatusOK))
+
 		ch1 := resp1.Header.Get("X-Cache")
 		Expect(ch1).To(Equal("MISS"))
 
@@ -166,7 +205,118 @@ var _ = Describe("Progszy", func() {
 		c.CloseIdleConnections()
 	})
 
+	It("should reject matching pages", func() {
+		// fmt.Println(server.URL)
+
+		// TODO This test should use a local test HTTP server?
+
+		c, err := newProxyClient(server.URL)
+		Expect(err).To(BeNil())
+
+		req, err := http.NewRequest(http.MethodGet, "http://books.toscrape.com", nil)
+		Expect(err).To(BeNil())
+		req.Header.Add("X-Cache-Reject", "p([a-z]+)ch")
+		req.Header.Add("X-Cache-Reject", "\\<h3\\>.*\\</h3\\>")
+		req.Header.Add("X-Cache-Reject", "Books")
+
+		resp, err := c.Do(req)
+		Expect(err).To(BeNil())
+
+		defer resp.Body.Close()
+
+		Expect(resp.StatusCode).To(Equal(http.StatusPreconditionFailed))
+
+		ch := resp.Header.Get("X-Cache")
+		Expect(ch).To(Equal("MISS"))
+
+		// Try again, expect the same result.
+		resp2, err := c.Do(req)
+		Expect(err).To(BeNil())
+
+		defer resp2.Body.Close()
+
+		Expect(resp2.StatusCode).To(Equal(http.StatusPreconditionFailed))
+
+		ch2 := resp2.Header.Get("X-Cache")
+		Expect(ch2).To(Equal("MISS"))
+
+		c.CloseIdleConnections()
+	})
+
+	It("should work with goproxy", func() {
+
+		cache = progszy.NewSqliteCache(testCachePath)
+		// server2 := httptest.NewServer(http.HandlerFunc(progszy.ProxyHandlerWith(cache)))
+		// fmt.Println("server started")
+
+		// ...
+		proxy := goproxy.NewProxyHttpServer()
+		proxy.Verbose = true
+		// log.Fatal(http.ListenAndServe(":8080", proxy))
+
+		proxy.OnRequest().HandleConnect(goproxy.AlwaysMitm)
+
+		proxy.OnRequest().DoFunc(
+			func(r *http.Request, ctx *goproxy.ProxyCtx) (*http.Request, *http.Response) {
+				log.Printf("OnRequest headers %v", r.Header)
+
+				// resp, err := http.Get(r.URL.String())
+				resp, err := http.Get("http://books.toscrape.com")
+				if err != nil {
+					// TODO How do we handle errors in here? - By returning appropriate HTTP responses.
+					panic(err)
+				}
+				return nil, resp
+			})
+
+		// TODO(js) So we know our primary method's interface should just be: func(r *http.Request) *http.Response
+
+		// TODO Unbodge this.
+		server.Close()
+		server = httptest.NewServer(proxy)
+
+		c, err := newProxyClient2(server.URL)
+		Expect(err).To(BeNil())
+
+		// resp, err := c.Get("http://books.toscrape.com")
+		resp, err := c.Get("https://google.com")
+		Expect(err).To(BeNil())
+
+		defer resp.Body.Close()
+
+		Expect(resp.StatusCode).To(Equal(http.StatusOK))
+
+		body, err := ioutil.ReadAll(resp.Body)
+		Expect(err).To(BeNil())
+		Expect(body).To(ContainSubstring("Books"))
+
+		c.CloseIdleConnections()
+
+		// server2.Close()
+		// fmt.Println("server closed")
+		err = cache.CloseAll()
+		Expect(err).To(BeNil())
+
+		// // TODO(js) This is somewhat clunky.
+		// err = deleteSqliteDBs()
+		// Expect(err).To(BeNil())
+
+	})
+
 })
+
+var acceptAllCerts = &tls.Config{InsecureSkipVerify: true}
+
+// var noProxyClient = &http.Client{Transport: &http.Transport{TLSClientConfig: acceptAllCerts}}
+
+func newProxyClient2(proxyURL string) (*http.Client, error) {
+	u, err := url.Parse(proxyURL)
+	if err != nil {
+		return nil, err
+	}
+	client := &http.Client{Transport: &http.Transport{Proxy: http.ProxyURL(u), TLSClientConfig: acceptAllCerts}}
+	return client, nil
+}
 
 func newProxyClient(proxyURL string) (*http.Client, error) {
 	u, err := url.Parse(proxyURL)
