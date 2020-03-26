@@ -89,7 +89,7 @@ func (c *SqliteCache) Get(uri string) (string, io.ReadCloser, error) {
 func fetchRecord(db *sql.DB, nurl string) (*cacheRecord, error) {
 	row := db.QueryRow(querySQL, nurl)
 	r := cacheRecord{}
-	err := row.Scan(&r.Key, &r.URL, &r.BaseDomain, &r.ContentType, &r.ETag, &r.LastModified, &r.ZstdBody, &r.CompressedLength, &r.ContentLength, &r.ResponseTime, &r.MD5, &r.Created)
+	err := row.Scan(&r.Key, &r.URL, &r.BaseDomain, &r.ContentLanguage, &r.ContentType, &r.ETag, &r.LastModified, &r.ZstdBody, &r.CompressedLength, &r.ContentLength, &r.ResponseTime, &r.MD5, &r.Created)
 	if err != nil {
 		// TODO(js) Improve error handling.
 		return nil, err
@@ -98,7 +98,7 @@ func fetchRecord(db *sql.DB, nurl string) (*cacheRecord, error) {
 }
 
 // Put adds the given URL/response pair to the cache.
-func (c *SqliteCache) Put(uri, mime, etag, lastMod string, b []byte, responseTime float64) error {
+func (c *SqliteCache) Put(uri /*lang,*/, mime, etag, lastMod string, b []byte, responseTime float64) error {
 
 	// log.Println("Called Put")
 
@@ -120,7 +120,7 @@ func (c *SqliteCache) Put(uri, mime, etag, lastMod string, b []byte, responseTim
 }
 
 func insertRecord(db *sql.DB, r *cacheRecord) error {
-	_, err := db.Exec(insertSQL, r.Key, r.URL, r.BaseDomain, r.ContentType, r.ETag, r.LastModified, r.ZstdBody, r.CompressedLength, r.ContentLength, r.ResponseTime, r.MD5, r.Created)
+	_, err := db.Exec(insertSQL, r.Key, r.URL, r.BaseDomain, r.ContentLanguage, r.ContentType, r.ETag, r.LastModified, r.ZstdBody, r.CompressedLength, r.ContentLength, r.ResponseTime, r.MD5, r.Created)
 	return err
 }
 
@@ -298,19 +298,20 @@ func createDB(filename string) (*sql.DB, error) {
 
 var createDDL = []string{`
 	CREATE TABLE IF NOT EXISTS web_resource (
-		normalised_url	TEXT NOT NULL,
-		url				TEXT NOT NULL,
-		base_domain		TEXT NOT NULL,
-		content_type	TEXT NOT NULL,
-		etag			TEXT NOT NULL,
-		last_modified	TEXT NOT NULL,
-		content			BLOB,
-		compressed_size	INTEGER NOT NULL,
-		content_length	INTEGER NOT NULL,
-		response_ms		REAL NOT NULL,
-		md5				TEXT NOT NULL,
-		created_at		DATETIME NOT NULL,
-		PRIMARY KEY (normalised_url)
+		normalised_url		TEXT NOT NULL,
+		url					TEXT NOT NULL,
+		base_domain			TEXT NOT NULL,
+		content_language	TEXT NOT NULL,
+		content_type		TEXT NOT NULL,
+		etag				TEXT NOT NULL,
+		last_modified		TEXT NOT NULL,
+		content				BLOB,
+		compressed_size		INTEGER NOT NULL,
+		content_length		INTEGER NOT NULL,
+		response_ms			REAL NOT NULL,
+		md5					TEXT NOT NULL,
+		created_at			DATETIME NOT NULL,
+		PRIMARY KEY (normalised_url, content_language, content_type)
 	)`, // TODO(js) Should etag and last_modified have be nullable?
 	"CREATE INDEX IF NOT EXISTS idx_web_resource_url ON web_resource(url)",
 	"CREATE INDEX IF NOT EXISTS idx_web_resource_created_at ON web_resource(created_at)",
@@ -319,7 +320,7 @@ var createDDL = []string{`
 const querySQL = "SELECT * FROM web_resource WHERE normalised_url = ?"
 
 // TODO(js) Review/document this decision (replace vs ignore)
-const insertSQL = "INSERT OR IGNORE INTO web_resource (normalised_url, url, base_domain, content_type, etag, last_modified, content, compressed_size, content_length, response_ms, md5, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)"
+const insertSQL = "INSERT OR IGNORE INTO web_resource (normalised_url, url, base_domain, content_language, content_type, etag, last_modified, content, compressed_size, content_length, response_ms, md5, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)"
 
-// const insertSQL = "INSERT INTO web_resource (normalised_url, url, base_domain, content_type, etag, last_modified, content, compressed_size, content_length, response_ms, md5, created_at) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?)"
-// const insertSQL = "INSERT OR REPLACE INTO web_resource (normalised_url, url, base_domain, content_type, etag, last_modified, content, compressed_size, content_length, response_ms, md5, created_at) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?)"
+// const insertSQL = "INSERT INTO web_resource (normalised_url, url, base_domain, content_language, content_type, etag, last_modified, content, compressed_size, content_length, response_ms, md5, created_at) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?)"
+// const insertSQL = "INSERT OR REPLACE INTO web_resource (normalised_url, url, base_domain, content_language, content_type, etag, last_modified, content, compressed_size, content_length, response_ms, md5, created_at) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?)"

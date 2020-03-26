@@ -24,8 +24,9 @@ func Run(addr, cachePath string) {
 	cache := NewSqliteCache(cachePath)
 	// s := NewServer(func(s *Server) { s.logger = logger })
 	h := &http.Server{
-		Addr:    addr,
-		Handler: http.HandlerFunc(ProxyHandlerWith(cache)),
+		Addr: addr,
+		// Handler: http.HandlerFunc(ProxyHandlerWith(cache)),
+		Handler: ProxyHandlerWith(cache),
 	}
 
 	go func() {

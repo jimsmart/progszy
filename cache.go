@@ -39,6 +39,8 @@ type cacheRecord struct {
 	URL string
 	// BaseDomain is the friendly domain name.
 	BaseDomain string
+	// ContentLanguage value (or empty string).
+	ContentLanguage string
 	// ContentType is the MIME type.
 	ContentType string
 	// ETag value (or empty string).

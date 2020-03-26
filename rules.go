@@ -30,6 +30,7 @@ func (m *rulesMap) get(pat string) (*regexp.Regexp, error) {
 }
 
 func (m *rulesMap) getAll(pats []string) ([]*regexp.Regexp, error) {
+	// TODO(js) Time stats for creation/compilation of regex rules.
 	relist := make([]*regexp.Regexp, len(pats))
 	for i, pat := range pats {
 		re, err := m.get(pat)
