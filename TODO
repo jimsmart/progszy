@@ -52,6 +52,7 @@ Cleanups
 - Server transport configuration.
 - Minor optimisation: Add Head method to Cache interface. NBD, we don't use HEAD.
 - Review remaining TODO comments throughout code.
+- We seem to be using a version of goproxy from 2018 - can we update?
 
 
 Testing
