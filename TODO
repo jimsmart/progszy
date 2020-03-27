@@ -32,8 +32,8 @@ Proxy chaining
 Controls via HTTP headers
 -------------------------
 
-- Skip/change response size limitation? (useful if we want to fetch Echa's 290mb sitemap)
-- Skip cache put? (useful if we want to fetch Echa's 290mb sitemap)
+- Skip/change response size limitation? (useful if we want to fetch the 290mb sitemap)
+- Skip cache put? (useful if we want to fetch the 290mb sitemap)
 - Skip cache fetch (passthrough)? - is this even useful??
 
 
