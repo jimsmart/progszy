@@ -1,6 +1,10 @@
 # progszy
 
-[TODO Github badges go here - as per my other repos]
+[![BSD3](https://img.shields.io/badge/license-BSD3-blue.svg?style=flat)](LICENSE.md)
+[![Build Status](https://img.shields.io/travis/jimsmart/progszy/master.svg?style=flat)](https://travis-ci.org/jimsmart/progszy)
+[![codecov](https://codecov.io/gh/jimsmart/progszy/branch/master/graph/badge.svg)](https://codecov.io/gh/jimsmart/progszy)
+[![Go Report Card](https://goreportcard.com/badge/github.com/jimsmart/progszy)](https://goreportcard.com/report/github.com/jimsmart/progszy)
+[![Godoc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://godoc.org/github.com/jimsmart/progszy)
 
 progszy is a hard-caching HTTP(S) proxy server (with programmatic cache management), designed for use as part of a data-scraping pipeline.
 
@@ -128,7 +132,7 @@ $ go test -coverprofile=coverage.out && go tool cover -html=coverage.out
 
 ## License
 
-TODO license BSD or MIT? What do deps use?
+progszy is copyright 2020 by Jim Smart and released under the [BSD 3-Clause License](LICENSE.md)
 
 ## History
 
