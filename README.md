@@ -20,7 +20,7 @@ Cached content is persisted in an [SQLite](https://www.sqlite.org/index.html) da
 
 A separate single-file database is created per domain, to cache its respective content (that is: content is 'binned' according to the domain's base/root name). Database filenames also contain a creation timestamp. 
 
-For example, request responses for `http://www.example.com/index.htm` and `http://foo.bar.example.com/index.htm` will both get cached in the same database, with a filename like `example.com-2020-03-20-1640.sqlite`.
+For example, request responses for `http://www.example.com/index.htm` and `http://foo.bar.example.com/index.htm` will both get cached in the same database, which would have a filename like `example.com-2020-03-20-1640.sqlite`.
 
 We may review/change this binning/naming strategy at a later date.
 
