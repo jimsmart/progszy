@@ -10,7 +10,7 @@ progszy is a hard-caching HTTP(S) proxy server (with programmatic cache manageme
 
 It is both a standalone executable CLI program, and a Go package.
 
-It is **not** suitable for use as a regular HTTP(S) caching proxy, for humans surfing with web browsers.
+It is **not** suitable for use as a regular HTTP(S) caching proxy for humans surfing with web browsers.
 
 progszy should work with any HTTP client, but currently has only been tested with Go's http.Client.
 
