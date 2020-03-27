@@ -70,9 +70,13 @@ Incoming `X-*` headers are not copied to outgoing requests.
 
 TODO 
 
+TODO Document any runtime dependencies - I believe the binary should be standalone?
+
 ### Build From Source
 
 TODO 
+
+TODO Document build-time dependencies that require preinstallation: Sqlite? gcc toolchain to build zstd?
 
 ## Usage Examples
 
