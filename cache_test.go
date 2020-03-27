@@ -117,7 +117,7 @@ var _ = Describe("Cache", func() {
 
 		It("should return a 'miss' error for an unknown URL", func() {
 			c := progszy.NewSqliteCache(testCachePath)
-			_, _, err := c.Get("http://example.com/")
+			_, err := c.Get("http://example.com/")
 			Expect(err).To(Equal(progszy.ErrCacheMiss))
 			err = c.CloseAll()
 			Expect(err).To(BeNil())
@@ -128,11 +128,14 @@ var _ = Describe("Cache", func() {
 			content := []byte("fake-content")
 
 			c := progszy.NewSqliteCache(testCachePath)
-			err := c.Put("http://example.com/", "text/html", "", "", content, 0)
+			cr, err := progszy.NewCacheRecord("http://example.com/", "", "text/html", "", "", content, 0)
 			Expect(err).To(BeNil())
-			m, r, err := c.Get("http://example.com/")
+			err = c.Put(cr)
 			Expect(err).To(BeNil())
-			Expect(m).To(Equal("text/html"))
+			cr, err = c.Get("http://example.com/")
+			Expect(err).To(BeNil())
+			Expect(cr.ContentType).To(Equal("text/html"))
+			r := cr.Body()
 			defer r.Close()
 			b, err := ioutil.ReadAll(r)
 			Expect(err).To(BeNil())

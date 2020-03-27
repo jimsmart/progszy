@@ -2,7 +2,6 @@ package progszy
 
 import (
 	"database/sql"
-	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -59,36 +58,36 @@ func NewSqliteCache(cachePath string) *SqliteCache {
 // Get the cached response for the given URL.
 // If the given URL does not exist in the cache,
 // error ErrCacheMiss is returned.
-func (c *SqliteCache) Get(uri string) (string, io.ReadCloser, error) {
+func (c *SqliteCache) Get(uri string) (*CacheRecord, error) {
 
 	// log.Println("Called Get")
 
 	nurl, bd, err := cacheRecordKey(uri)
 	if err != nil {
-		return "", nil, err
+		return nil, err
 	}
 
 	db := c.getDB(bd)
 	if db == nil {
 		// The db doesn't exist.
-		return "", nil, ErrCacheMiss
+		return nil, ErrCacheMiss
 	}
 
 	r, err := fetchRecord(db, nurl)
 	if err != nil {
-		return "", nil, err
+		return nil, err
 	}
 	if r == nil {
 		// The record doesn't exist.
-		return "", nil, ErrCacheMiss
+		return nil, ErrCacheMiss
 	}
 
-	return r.ContentType, r.Body(), nil
+	return r, nil
 }
 
-func fetchRecord(db *sql.DB, nurl string) (*cacheRecord, error) {
+func fetchRecord(db *sql.DB, nurl string) (*CacheRecord, error) {
 	row := db.QueryRow(querySQL, nurl)
-	r := cacheRecord{}
+	r := CacheRecord{}
 	err := row.Scan(&r.Key, &r.URL, &r.BaseDomain, &r.ContentLanguage, &r.ContentType, &r.ETag, &r.LastModified, &r.ZstdBody, &r.CompressedLength, &r.ContentLength, &r.ResponseTime, &r.MD5, &r.Created)
 	if err != nil {
 		// TODO(js) Improve error handling.
@@ -98,28 +97,28 @@ func fetchRecord(db *sql.DB, nurl string) (*cacheRecord, error) {
 }
 
 // Put adds the given URL/response pair to the cache.
-func (c *SqliteCache) Put(uri /*lang,*/, mime, etag, lastMod string, b []byte, responseTime float64) error {
+func (c *SqliteCache) Put(cr *CacheRecord) error {
 
 	// log.Println("Called Put")
 
-	r, err := newCacheRecord(uri, mime, etag, lastMod, b, responseTime)
+	// r, err := newCacheRecord(uri, mime, etag, lastMod, b, responseTime)
+	// if err != nil {
+	// 	return err
+	// }
+
+	db, err := c.getOrCreateDB(cr.BaseDomain)
 	if err != nil {
 		return err
 	}
 
-	db, err := c.getOrCreateDB(r.BaseDomain)
-	if err != nil {
-		return err
-	}
-
-	err = insertRecord(db, r)
+	err = insertRecord(db, cr)
 	// if err != nil {
 	// 	log.Printf("insert error %v", err)
 	// }
 	return err
 }
 
-func insertRecord(db *sql.DB, r *cacheRecord) error {
+func insertRecord(db *sql.DB, r *CacheRecord) error {
 	_, err := db.Exec(insertSQL, r.Key, r.URL, r.BaseDomain, r.ContentLanguage, r.ContentType, r.ETag, r.LastModified, r.ZstdBody, r.CompressedLength, r.ContentLength, r.ResponseTime, r.MD5, r.Created)
 	return err
 }

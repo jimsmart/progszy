@@ -18,8 +18,8 @@ import (
 )
 
 type Cache interface {
-	Get(uri string) (string, io.ReadCloser, error)
-	Put(uri, mime, etag, lastMod string, b []byte, responseTime float64) error
+	Get(uri string) (*CacheRecord, error)
+	Put(cr *CacheRecord) error
 	CloseAll() error
 }
 
@@ -32,7 +32,7 @@ type Cache interface {
 // ErrCacheMiss occurs when a given URL is not in the cache.
 var ErrCacheMiss = errors.New("progszy: cache miss")
 
-type cacheRecord struct {
+type CacheRecord struct {
 	// Key is the normalised URL.
 	Key string
 	// URL is the originally requested URL.
@@ -50,9 +50,9 @@ type cacheRecord struct {
 	// ZstdBody holds the Zstd compressed HTTP body.
 	ZstdBody []byte
 	// CompressedLength is the length of ZstdBody.
-	CompressedLength int
+	CompressedLength int64
 	// ContentLength is the original content length.
-	ContentLength int
+	ContentLength int64
 	// ResponseTime is the duration of the original request, in ms.
 	ResponseTime float64
 	// MD5 is the md5 sum of the uncompressed body.
@@ -61,13 +61,13 @@ type cacheRecord struct {
 	Created time.Time
 }
 
-func (r *cacheRecord) Body() io.ReadCloser {
+func (r *CacheRecord) Body() io.ReadCloser {
 	return zstd.NewReader(bytes.NewReader(r.ZstdBody))
 }
 
 const logCompressionStats = false
 
-func (r *cacheRecord) SetBody(body []byte) error {
+func (r *CacheRecord) SetBody(body []byte) error {
 	olen := int64(len(body))
 	start := time.Now()
 
@@ -89,8 +89,8 @@ func (r *cacheRecord) SetBody(body []byte) error {
 	r.MD5 = hex.EncodeToString(h.Sum(nil))
 	// log.Printf("md5 %s", r.MD5)
 
-	r.CompressedLength = len(cbody)
-	r.ContentLength = len(body)
+	r.CompressedLength = int64(len(cbody))
+	r.ContentLength = int64(len(body))
 
 	r.ZstdBody = cbody
 	return nil
@@ -98,22 +98,23 @@ func (r *cacheRecord) SetBody(body []byte) error {
 
 // TODO cacheRecord should hold ETag, LastModified, Content-Length(?), md5(?)
 
-func newCacheRecord(uri, mime, etag, lastMod string, body []byte, responseTime float64) (*cacheRecord, error) {
+func NewCacheRecord(uri, lang, mime, etag, lastMod string, body []byte, responseTime float64) (*CacheRecord, error) {
 
 	nurl, bd, err := cacheRecordKey(uri)
 	if err != nil {
 		return nil, err
 	}
 
-	r := &cacheRecord{
-		Key:          nurl,
-		URL:          uri,
-		BaseDomain:   bd,
-		ContentType:  mime,
-		ETag:         etag,
-		LastModified: lastMod,
-		ResponseTime: responseTime,
-		Created:      time.Now(),
+	r := &CacheRecord{
+		Key:             nurl,
+		URL:             uri,
+		BaseDomain:      bd,
+		ContentLanguage: lang,
+		ContentType:     mime,
+		ETag:            etag,
+		LastModified:    lastMod,
+		ResponseTime:    responseTime,
+		Created:         time.Now(),
 	}
 
 	err = r.SetBody(body)

@@ -67,9 +67,6 @@ func proxyHandler(cache Cache) func(*http.Request) *http.Response {
 
 	return func(r *http.Request) *http.Response {
 
-		// TODO We do not handle ETag header. See https://www.keycdn.com/blog/http-cache-headers
-		// TODO We do not handle Last-Modified header.
-
 		start := time.Now()
 		defer func() {
 			dur := time.Since(start)
@@ -118,36 +115,30 @@ func proxyHandler(cache Cache) func(*http.Request) *http.Response {
 		// log.Printf("============requested uri %s", uri)
 
 		// Try to get from cache.
-		mime, cr, err := cache.Get(uri)
+		cr, err := cache.Get(uri)
 		if err == nil {
 			// Cache hit.
-			defer cr.Close()
+			// log.Println("cache hit")
 
 			resp := newResponse(r, http.StatusOK)
 			resp.Header.Set("X-Cache", "HIT")
-			// log.Println("cache hit")
+			applyCommonHeaders(resp, cr)
 
-			resp.Header.Set("Content-Type", mime)
 			switch r.Method {
 			case http.MethodGet:
-				// We have to copy this, it panics if we simply return cr as the Body.
+				body := cr.Body()
+				defer body.Close()
+				// We have to copy this, it panics if we simply return the body reader.
 				buf := &bytes.Buffer{}
-				length, err := io.Copy(buf, cr)
+				_, err := io.Copy(buf, body)
 				if err != nil {
 					log.Printf("io.Copy error during GET: %v\n", err)
 					return httpError(r, fmt.Sprint(err), http.StatusInternalServerError)
 				}
 				resp.Body = ioutil.NopCloser(buf)
-				resp.Header.Set("Content-Length", strconv.Itoa(int(length)))
-				log.Printf("decompressed content size %s", byteCountDecimal(length))
+				log.Printf("decompressed content size %s", byteCountDecimal(cr.ContentLength))
 			case http.MethodHead:
-				length, err := io.Copy(ioutil.Discard, cr)
-				if err != nil {
-					log.Printf("io.Copy error during HEAD: %v\n", err)
-					return httpError(r, fmt.Sprint(err), http.StatusInternalServerError)
-				}
-				resp.Header.Set("Content-Length", strconv.Itoa(int(length)))
-				log.Printf("decompressed content size %s (HEAD)", byteCountDecimal(length))
+				// No action.
 			}
 			return resp
 		}
@@ -257,12 +248,18 @@ func makeCacheMissHandler() func(r *http.Request, uri string, cache Cache) *http
 		}
 
 		// Get metadata headers.
+		lang := resp.Header.Get("Content-Language")
 		mime := resp.Header.Get("Content-Type")
 		etag := resp.Header.Get("ETag")
 		lastMod := resp.Header.Get("Last-Modified")
 
 		// Put asset in the cache.
-		err = cache.Put(uri, mime, etag, lastMod, body, responseTime)
+		cr, err := NewCacheRecord(uri, lang, mime, etag, lastMod, body, responseTime)
+		if err != nil {
+			log.Printf("Error creating CacheRecord: %v\n", err)
+			return httpError(r, fmt.Sprint(err), http.StatusInternalServerError)
+		}
+		err = cache.Put(cr)
 		if err != nil {
 			log.Printf("cache.Put error: %v\n", err)
 			return httpError(r, fmt.Sprint(err), http.StatusInternalServerError)
@@ -270,14 +267,30 @@ func makeCacheMissHandler() func(r *http.Request, uri string, cache Cache) *http
 		// log.Printf("cached content size %s", byteCountDecimal(int64(len(body))))
 
 		// Finally, send to client.
-		resp.Header.Set("Content-Type", mime)
+		applyCommonHeaders(resp, cr)
 		switch r.Method {
 		case "GET":
 			resp.Body = ioutil.NopCloser(bytes.NewBuffer(body))
 		case "HEAD":
-			resp.Header.Set("Content-Length", strconv.Itoa(len(body)))
+			// No action.
 		}
 		return resp
+	}
+}
+
+func applyCommonHeaders(resp *http.Response, cr *CacheRecord) {
+	resp.Header.Set("Content-Length", strconv.Itoa(int(cr.ContentLength)))
+	if len(cr.ContentType) > 0 {
+		resp.Header.Set("Content-Type", cr.ContentType)
+	}
+	if len(cr.ETag) > 0 {
+		resp.Header.Set("ETag", cr.ETag)
+	}
+	if len(cr.LastModified) > 0 {
+		resp.Header.Set("Last-Modified", cr.LastModified)
+	}
+	if len(cr.ContentLanguage) > 0 {
+		resp.Header.Set("Content-Language", cr.ContentLanguage)
 	}
 }
 
