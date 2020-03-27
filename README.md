@@ -66,22 +66,13 @@ Incoming `X-*` headers are not copied to outgoing requests.
 
 ## Installation
 
-TODO installation instructions
+### Binary Executable
 
-TODO installation instruction for binary and build?
+TODO 
 
-### Go Dependencies
+### Build From Source
 
-For reference, progszy makes use of the following packages:
-
-- SQLite driver [https://github.com/mattn/go-sqlite3](https://github.com/mattn/go-sqlite3)
-- Zstd wrapper [https://github.com/DataDog/zstd](https://github.com/DataDog/zstd)
-- goproxy [https://github.com/elazarl/goproxy](https://github.com/elazarl/goproxy)
-- retryablehttp [https://github.com/hashicorp/go-retryablehttp](https://github.com/hashicorp/go-retryablehttp)
-- cleanhttp [https://github.com/hashicorp/go-cleanhttp](https://github.com/hashicorp/go-cleanhttp)
-- publicsuffix [https://github.com/weppos/publicsuffix-go](https://github.com/weppos/publicsuffix-go)
-- Standard library.
-- [Ginkgo](https://onsi.github.io/ginkgo/) and [Gomega](https://onsi.github.io/gomega/) are used in the tests.
+TODO 
 
 ## Usage Examples
 
@@ -129,6 +120,21 @@ For a full coverage report, try:
 ```bash
 $ go test -coverprofile=coverage.out && go tool cover -html=coverage.out
 ```
+
+## Project Dependencies / Credits
+
+progszy makes use of the following packages:
+
+- SQLite driver [https://github.com/mattn/go-sqlite3](https://github.com/mattn/go-sqlite3)
+- Zstd wrapper [https://github.com/DataDog/zstd](https://github.com/DataDog/zstd)
+- goproxy [https://github.com/elazarl/goproxy](https://github.com/elazarl/goproxy)
+- retryablehttp [https://github.com/hashicorp/go-retryablehttp](https://github.com/hashicorp/go-retryablehttp)
+- cleanhttp [https://github.com/hashicorp/go-cleanhttp](https://github.com/hashicorp/go-cleanhttp)
+- publicsuffix [https://github.com/weppos/publicsuffix-go](https://github.com/weppos/publicsuffix-go)
+- Go standard library.
+- [Ginkgo](https://onsi.github.io/ginkgo/) and [Gomega](https://onsi.github.io/gomega/) are used in the tests.
+
+— Many thanks to their authors and contributors.
 
 ## License
 
