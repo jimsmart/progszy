@@ -93,7 +93,7 @@ Run progszy with default settings:
 
 ```bash
 $ ./progszy
-Cache location /<path-to-progszy-binary>/cache
+Cache location /<path-to-current-folder>/cache
 Listening on port 5595
 ```
 
