@@ -100,8 +100,8 @@ Listening on port 5595
 Run using custom configuration:
 
 ```bash
-$ ./progszy -port 8080 -cache ./store
-Cache location /<path-to-progszy-binary>/store
+$ ./progszy -port 8080 -cache /foo/bar/store
+Cache location /foo/bar/store
 Listening on port 8080
 ```
 
@@ -121,7 +121,7 @@ For a full coverage report, try:
 $ go test -coverprofile=coverage.out && go tool cover -html=coverage.out
 ```
 
-## Project Dependencies / Credits
+## Project Dependencies
 
 progszy makes use of the following packages:
 
