@@ -4,7 +4,7 @@ coverage.out
 *.sublime-workspace
 *.code-workspace
 *.sqlite
-cache/
-test/
-cmd/progszy/progszy
-cmd/progszy/cache/
+/cache/
+/test/
+/cmd/progszy/progszy
+/cmd/progszy/cache/

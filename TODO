@@ -1,0 +1,279 @@
+TODO
+====
+
+
+Progszy
+=======
+
+- Check cache folder location exists on startup, otherwise fail to start.
+
+
+
+SQLite cache rotation/archival method
+-------------------------------------
+- HTTP handler for REST API.
+- Support method: list current dbs.
+ - List all .sqlite files.
+ - Process list into groups by prefix.
+- Then for given database: call the create func, and kick out the old reference from the map (plus cleanup/close)
+- Trigger via a REST API.
+- Locking around db access (per db)...?
+- Move/archive/create new db.
+
+
+Proxy chaining
+--------------
+- Not essential initially.
+- Set upstream proxy URL via CLI param.
+ - See https://www.admfactory.com/how-to-setup-a-proxy-for-http-client-in-golang/
+   or see existing scraper code.
+
+
+Controls via HTTP headers
+-------------------------
+
+- Skip/change response size limitation? (useful if we want to fetch Echa's 290mb sitemap)
+- Skip cache put? (useful if we want to fetch Echa's 290mb sitemap)
+- Skip cache fetch (passthrough)? - is this even useful??
+
+
+HTTP Client / Server tuning
+---------------------------
+- http://tleyden.github.io/blog/2016/11/21/tuning-the-go-http-client-library-for-load-testing/
+
+
+Cleanups
+--------
+- Create cache folder if it does not exist?
+- The main request handler is getting crufty.
+- Disable existing logging
+- Refactoring
+- http.Client/Transport configuration - See https://medium.com/@nate510/don-t-use-go-s-default-http-client-4804cb19f779
+- Server transport configuration.
+- Minor optimisation: Add Head method to Cache interface. NBD, we don't use HEAD.
+- Review remaining TODO comments throughout code.
+
+
+Testing
+-------
+- Test all 'fiddly' headers work as intended (ETag, etc)
+
+
+Language / lang negotiation
+---------------------------
+
+- Accept-Language (req) https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language
+- Content-Language (resp) https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Language
+ - We need to store this in the cache.
+  - DB mods - done
+  - Passing in - refactor and use cacheRecord
+- We need to handle language negotiation
+
+
+Content negotiation
+-------------------
+- We likely need to handle content negotiation
+
+
+Logging
+-------
+- What is retryablehttp using? Is it https://godoc.org/github.com/go-kit/kit/log/level ???
+- What is goproxy using?
+- Can we control log-level via an HTTP header? Then we can get logging per scraper/client/request.
+- We really only need Debug and Error, according to Dave Cheney. But then what about stats logging?
+
+
+Cookies
+-------
+- We don't handle them specifically. NBD, I think?
+
+
+Authentication
+--------------
+- Not supported. Not a current use case.
+
+
+Extra HTTP status headers
+-------------------------
+
+- If we send the appropriate status info back, perhaps the spider/scraper
+  can make more informed decisions?
+  - Name of the cache bin (including timestamp) ...?
+  - Duration of upstream request ...?
+  - Underlying error details ...?
+
+- The same for incoming headers, which could control behaviour:
+ - Rejection patterns. (Done)
+ - Logging.
+ - Db/storage 'bin' name?
+ - Robots.txt behaviour? - Decided to handle this in the scraper component/package.
+ - Retry rules?
+
+
+
+Example scraping websites
+-------------------------
+
+http://example.webscraping.com
+http://toscrape.com
+https://webscraper.io/test-sites
+
+
+Config file
+-----------
+
+- I think most of this is now redundant...
+
+- Port to listen on (could be param) - implemented as CLI param
+
+- Reject rules
+ - Alternatively, reject rules could be ditched in favour of
+   dedicated cache-cleaners, and more error checking in the spider/scraper.
+ - Or reject rules could be passed in via HTTP headers? - Now implemented.
+
+- Retry rules
+ - At a basic level, these could be hard-coded instead, or defauts,
+   and/or the spider/scraper could use a retrying client.
+ - Currently using defaults. NBD for now.
+
+
+
+DONE
+====
+
+Improve Cache interface
+-----------------------
+- Refactoring...
+- Make methods use cacheRecord ...?
+
+
+goproxy
+-------
+- Should we split our primary method, moving all the response processing / cache put into different goproxy handler?
+ - Pros: cleans up primary method. splits some code.
+ - Cons: splits some code. less control over returned response if we allow goproxy to pipe the real response. Not ideal. Consistency is good.
+- Done: we split the handler, but continued to only use a single API hook in goproxy.
+
+
+
+Controls via HTTP headers
+-------------------------
+
+- IgnoreInsecureSSL option - perhaps low priority? 
+  I don't believe we currently have any sites using self-signed/out-dated SSL certs, 
+  but we may do later. And the 'toscrape' sites (used in tests) have self-signed certs.
+  An out-dated cert is a possible future gotcha.
+ - Use HTTP headers to pass option - "X-Cache-SSL: INSECURE"
+ - Use option when setting up outgoing HTTP client.
+
+
+goproxy
+-------
+
+- Set up a test harness. - done
+- Set up a proxy (start with HTTP). - done
+- Pass client requests through it. - done
+- Examine method hooks. - done
+- Try logging/intercepting things. - done (mitm)
+- Repeat with HTTPS. - done
+
+- Our primary method's interface must implement: func(r *http.Request) *http.Response
+ - See https://github.com/elazarl/goproxy/blob/master/responses.go#L17
+
+- Refactor primary method accordingly.
+- Swap HTTP handler in Run method.
+
+SSL
+---
+
+- In progress, above.
+
+- There's two parts to this, http proxy-side, and the client.
+ - The client needs specific setup, to not fail on bad certs
+   (because a proxy is basically a MITM attack).
+  - See https://www.socketloop.com/tutorials/golang-disable-security-check-for-http-ssl-with-bad-or-expired-certificate
+  - See also https://stackoverflow.com/questions/12122159/how-to-do-a-https-request-with-bad-certificate
+ - The server needs... ? See:
+ https://github.com/hauke96/tiny-http-proxy
+ http://www.bizcoder.com/caching-is-hard-draw-me-a-picture
+ https://medium.com/@mlowicki/http-s-proxy-in-golang-in-less-than-100-lines-of-code-6a51c2f2c38c
+ https://github.com/gmarik/cdp-proxy
+
+ - Maybe just use https://github.com/elazarl/goproxy
+
+ - Another option is for the client to rewrite all HTTPS requests to use HTTP, although this would mean redirects.
+  - Perhaps we could pass a flag in the headers, and rewrite back to HTTPS in the proxy? This is starting to sound ugly though :/
+  - It might be easier to give up on the proxy server idea, and just include bits of progrszy as a library.
+
+
+
+SQLite cache
+------------
+
+findDatabase()
+ - do we know its file location already? 
+  - use domain-slug as map key, rlock the map first.
+  - yep, return resulting file location from the map.
+ - wlock the map, check again.
+  - yes, we have a file location - must've been another thread.
+  - return resulting file location from the map.
+ - keep the wlock
+ - find all files starting with domain-slug, ending with .sqlite
+  - if we found any:
+   - sort them, find the one with the newest timestamp in its name
+    - stick it into the wlocked map, and return it.
+  - otherwise, make a new filename from domain-slug and timestamp
+   - create an empty database with that filename.
+    - stick it into the wlocked map, and return it.
+
+
+Path handling / work folder
+---------------------------
+
+- Need to allow for a configurable path/folder for cache location.
+- Fixup all proxy code.
+- Fixup tests to use their own folder.
+
+
+Client Retry
+------------
+
+- Integrate https://github.com/hashicorp/go-retryablehttp
+- Note that this means outgoing HTTP requests can now take a long time,
+  do we need to ensure that the HTTP server and the requesting client can cope with this ok? (Noted in code in a TODO)
+
+
+Reject rules
+------------
+ - Regexp rules passed in via HTTP headers (X-Cache-Reject)
+ - Cache regexp rules, preventing regexp.Compile overheads.
+
+
+Main func / cmd
+---------------
+
+- Launch proxy.
+- Shutdown.
+- Handling of CLI params.
+
+
+Sundry
+------
+
+- Refactor Cache interface to use CacheRecord.
+
+- Fixup all missing header stuff:
+ - Etag (persist and fetch)
+ - Last-Modified (persist and fetch)
+ - Content-Language (persist and fetch)
+ - Content-Size (persist and fetch)
+
+- Document header stuff.
+
+
+- We need to make content_type part of our primary key.
+
+- we should not be using client.Get, we should instead be building a Request
+- we should also copy across headers from incoming to outgoing Request
+
+
