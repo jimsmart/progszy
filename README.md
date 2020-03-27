@@ -105,7 +105,7 @@ Cache location /foo/bar/store
 Listening on port 8080
 ```
 
-Press <kbd>control</kbd>+<kbd>c</kbd> to halt execution — progszy will attempt to cleanly complete any in-flight connections before shutting down.
+Press <kbd>control</kbd>+<kbd>c</kbd> to halt execution — progszy will attempt to cleanly complete any in-flight connections before exiting.
 
 ## Package Documentation
 
