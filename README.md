@@ -14,7 +14,11 @@ progszy should work with any HTTP client, but currently has only been tested wit
 
 Cached content is persisted in an [SQLite](https://www.sqlite.org/index.html) database, using [Zstandard](https://github.com/facebook/zstd) compression, enabling cached content to be retrieved [faster](https://www.sqlite.org/fasterthanfs.html) than regular file system reads, while also providing convenient packaging of cached content and saving storage space.
 
-A separate single-file database is created per domain, to cache its respective content (that is: content is 'binned' according to the domain's base/root name). Database filenames also contain a creation timestamp.
+A separate single-file database is created per domain, to cache its respective content (that is: content is 'binned' according to the domain's base/root name). Database filenames also contain a creation timestamp. 
+
+For example, request responses for `http://www.example.com/index.htm` and `http://foo.bar.example.com/index.htm` will both get cached in the same database, with a filename like `example.com-2020-03-20-1640.sqlite`.
+
+We may review/change this binning/naming strategy at a later date.
 
 ### Caching Strategy
 
@@ -28,7 +32,7 @@ Cache eviction/management is manual-only at present. Later we will add a REST AP
 
 ## HTTP(S) Proxy
 
-The CLI version of progszy operates as a standalone HTTP(S) proxy server. By default it listens on port 5995, for which the client's proxy configuration URL would be `http://127.0.0.1:5595`.
+The CLI version of progszy operates as a standalone HTTP(S) proxy server. By default it listens on port 5595, for which the client's proxy configuration URL would be `http://127.0.0.1:5595`.
 
 TODO 127.0.0.1 or 0.0.0.0 or localhost ?
 
@@ -36,7 +40,7 @@ Incoming requests can be either vanilla HTTP, or can be HTTPS (using `CONNECT` p
 
 When proxying HTTPS requests, the connection is intercepted by a man-in-the-middle (MITM) hijack, to allow both caching and the application of rules, and the resulting outbound stream is then re-encrypted using a private certificate, before being passed to the client. Note that clients wishing to proxy HTTPS requests using progszy will need specific configuration to prevent/ignore the resulting certificate mismatch errors caused by this process. See tests for an example of how this is done in Go.
 
-Outgoing HTTP requests utilise automatic retries with exponential backoff. Internal HTTP clients use a shared transport with pooling.
+Outgoing HTTP requests utilise automatic retries with exponential backoff. Internal HTTP clients use a shared transport with pooling. Connections are not explicitly rate-limited.
 
 Currently, progszy only supports HTTP `GET`, `HEAD` and `CONNECT` methods. Note that support for the `HEAD` method is not actually particularly useful in this context, and really only exists for spec compliance.
 
