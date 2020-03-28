@@ -67,18 +67,29 @@ func (c *SqliteCache) Get(uri string) (*CacheRecord, error) {
 		return nil, err
 	}
 
-	db := c.getDB(bd)
-	if db == nil {
-		// The db doesn't exist.
-		return nil, ErrCacheMiss
+	// TODO getDb should be replaced with getOrFindDB, not getOrCreate. NBD, but refactor to make intent clear?
+
+	// db := c.getDB(bd)
+	// if db == nil {
+	// 	// The db doesn't exist.
+	// 	log.Println("cache.Get: getDB returned nil")
+	// 	return nil, ErrCacheMiss
+	// }
+
+	db, err := c.getOrCreateDB(bd)
+	if err != nil {
+		// log.Printf("cache.Get: getOrCreateDB error %s", err)
+		return nil, err
 	}
 
 	r, err := fetchRecord(db, nurl)
 	if err != nil {
+		// log.Printf("cache.Get: fetchRecord error %s", err)
 		return nil, err
 	}
 	if r == nil {
 		// The record doesn't exist.
+		// log.Println("cache.Get: record does not exist")
 		return nil, ErrCacheMiss
 	}
 
@@ -89,6 +100,9 @@ func fetchRecord(db *sql.DB, nurl string) (*CacheRecord, error) {
 	row := db.QueryRow(querySQL, nurl)
 	r := CacheRecord{}
 	err := row.Scan(&r.Key, &r.URL, &r.BaseDomain, &r.ContentLanguage, &r.ContentType, &r.ETag, &r.LastModified, &r.ZstdBody, &r.CompressedLength, &r.ContentLength, &r.ResponseTime, &r.MD5, &r.Created)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
 	if err != nil {
 		// TODO(js) Improve error handling.
 		return nil, err
