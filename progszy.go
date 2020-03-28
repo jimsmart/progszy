@@ -163,6 +163,7 @@ func makeCacheMissHandler() func(r *http.Request, uri string, cache Cache) *http
 
 		resp := newResponse(r, http.StatusOK)
 		resp.Header.Set("X-Cache", "MISS")
+
 		// log.Println("cache miss")
 
 		// Build the request.
