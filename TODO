@@ -1,11 +1,51 @@
 TODO
 ====
 
+Stats
+
+Best compression (20): 
+  sqlite db size = ~2.9M
+  scraper with hot cache = ~35s
+  scraper from cold = ~200s
+
+Default compression (5): 
+  sqlite db size = ~3.1M
+  scraper with hot cache = ~35s
+  scraper from cold = ~200s
+
+
+
+
 
 Progszy
 =======
 
 - Check cache folder location exists on startup, otherwise fail to start.
+
+- Would be nice to format durations better.
+ - ns µs ms s m h d
+
+if dur < time.Microsecond {
+  // Nanosecond resolution
+  return fmt.Sprintf("%dns", dur)
+}
+
+if dur < time.Millisecond {
+  // Microsecond resolution
+  return fmt.Sprintf("%.3fµs", float64(dur) / float64(time.Microsecond))
+}
+
+if dur < time.Second {
+  // Millisecond resolution
+  return fmt.Sprintf("%.3fms", float64(dur) / float64(time.Millisecond))
+}
+
+// else do: d hr m s
+
+//if dur < time.Minute {
+//  // Second resolution
+//  return fmt.Sprintf("%.3fs", float64(dur) / float64(time.Second))
+//}
 
 
 

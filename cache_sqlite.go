@@ -67,19 +67,15 @@ func (c *SqliteCache) Get(uri string) (*CacheRecord, error) {
 		return nil, err
 	}
 
-	// TODO getDb should be replaced with getOrFindDB, not getOrCreate. NBD, but refactor to make intent clear?
-
-	// db := c.getDB(bd)
-	// if db == nil {
-	// 	// The db doesn't exist.
-	// 	log.Println("cache.Get: getDB returned nil")
-	// 	return nil, ErrCacheMiss
-	// }
-
-	db, err := c.getOrCreateDB(bd)
+	db, err := c.getDB(bd)
 	if err != nil {
 		// log.Printf("cache.Get: getOrCreateDB error %s", err)
 		return nil, err
+	}
+	if db == nil {
+		// The db doesn't exist.
+		// log.Println("cache.Get: getDB returned nil")
+		return nil, ErrCacheMiss
 	}
 
 	r, err := fetchRecord(db, nurl)
@@ -170,7 +166,10 @@ func (c *SqliteCache) CloseAll() error {
 func (c *SqliteCache) getOrCreateDB(bd string) (*sql.DB, error) {
 	// First we assume that a handle exists,
 	// so we just try to get the existing handle.
-	db := c.getDB(bd)
+	db, err := c.getDB(bd)
+	if err != nil {
+		return nil, err
+	}
 	if db != nil {
 		return db, nil
 	}
@@ -178,11 +177,24 @@ func (c *SqliteCache) getOrCreateDB(bd string) (*sql.DB, error) {
 	return c.createDB(bd)
 }
 
-func (c *SqliteCache) getDB(bd string) *sql.DB {
+func (c *SqliteCache) getDB(bd string) (*sql.DB, error) {
 	c.mu.RLock()
-	db, _ := c.dbByBaseDomain[bd]
-	c.mu.RUnlock()
-	return db
+	defer c.mu.RUnlock()
+
+	db, ok := c.dbByBaseDomain[bd]
+	if ok {
+		return db, nil
+	}
+
+	// No database handle exists in the map.
+	// Does a suitably named database already exist on the filesystem?
+
+	db, err := c.findDB(bd)
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
 }
 
 func (c *SqliteCache) createDB(bd string) (*sql.DB, error) {
@@ -199,33 +211,18 @@ func (c *SqliteCache) createDB(bd string) (*sql.DB, error) {
 	}
 
 	// No database handle exists in the map.
-
 	// Does a suitably named database already exist on the filesystem?
 
-	// // TODO(js) Should we really just be dumping stuff in the working directory?
-	// path, err := os.Getwd()
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	filename, err := findSqliteFile(c.path, bd)
+	db, err := c.findDB(bd)
 	if err != nil {
 		return nil, err
 	}
-
-	if len(filename) > 0 {
-		// Yes, try using that.
-		db, err := sql.Open("sqlite3", filename)
-		if err != nil {
-			return nil, err
-		}
-		// Add the db handle to the map.
-		c.dbByBaseDomain[bd] = db
+	if db != nil {
 		return db, nil
 	}
 
 	// No, we must make a new db.
-	filename = filepath.Join(c.path, bd+"-"+timestamp()+fileExt)
+	filename := filepath.Join(c.path, bd+"-"+timestamp()+fileExt)
 	db, err = createDB(filename)
 	if err != nil {
 		return nil, err
@@ -234,6 +231,28 @@ func (c *SqliteCache) createDB(bd string) (*sql.DB, error) {
 	// Add the db handle to the map.
 	c.dbByBaseDomain[bd] = db
 
+	return db, nil
+}
+
+func (c *SqliteCache) findDB(bd string) (*sql.DB, error) {
+	// (Assumes the mutex is already locked)
+
+	filename, err := findSqliteFile(c.path, bd)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(filename) == 0 {
+		return nil, nil
+	}
+
+	// Yes, try using that.
+	db, err := sql.Open("sqlite3", filename)
+	if err != nil {
+		return nil, err
+	}
+	// Add the db handle to the map.
+	c.dbByBaseDomain[bd] = db
 	return db, nil
 }
 
