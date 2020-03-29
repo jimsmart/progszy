@@ -140,7 +140,7 @@ Packages used by progszy (and their licensing):
 - Go standard library. (BSD-style license)
 - [Ginkgo](https://onsi.github.io/ginkgo/) and [Gomega](https://onsi.github.io/gomega/) are used in the tests. (MIT license)
 
-— Many thanks to their authors and contributors.
+— Many thanks to the authors and contributors of these packages.
 
 ## License
 
