@@ -16,7 +16,7 @@ progszy should work with any HTTP client, but currently has only been tested wit
 
 ## Caching
 
-Cached content is persisted in an [SQLite](https://www.sqlite.org/index.html) database, using [Zstandard](https://github.com/facebook/zstd) compression, enabling cached content to be retrieved [faster](https://www.sqlite.org/fasterthanfs.html) than regular file system reads, while also providing convenient packaging of cached content and saving storage space.
+Cached content is persisted in an [SQLite](https://www.sqlite.org) database, using [Zstandard](https://www.zstd.net) compression, enabling cached content to be retrieved [faster](https://www.sqlite.org/fasterthanfs.html) than regular file system reads, while also providing convenient packaging of cached content and saving storage space.
 
 A separate single-file database is created per domain, to cache its respective content (that is: content is 'binned' according to the domain's base/root name). Database filenames also contain a creation timestamp. 
 
@@ -127,16 +127,18 @@ $ go test -coverprofile=coverage.out && go tool cover -html=coverage.out
 
 ## Project Dependencies
 
-progszy makes use of the following packages:
+Packages used by progszy (and their licensing):
 
-- SQLite driver [https://github.com/mattn/go-sqlite3](https://github.com/mattn/go-sqlite3)
-- Zstd wrapper [https://github.com/DataDog/zstd](https://github.com/DataDog/zstd)
-- goproxy [https://github.com/elazarl/goproxy](https://github.com/elazarl/goproxy)
-- retryablehttp [https://github.com/hashicorp/go-retryablehttp](https://github.com/hashicorp/go-retryablehttp)
-- cleanhttp [https://github.com/hashicorp/go-cleanhttp](https://github.com/hashicorp/go-cleanhttp)
-- publicsuffix [https://github.com/weppos/publicsuffix-go](https://github.com/weppos/publicsuffix-go)
-- Go standard library.
-- [Ginkgo](https://onsi.github.io/ginkgo/) and [Gomega](https://onsi.github.io/gomega/) are used in the tests.
+- SQLite driver [https://github.com/mattn/go-sqlite3](https://github.com/mattn/go-sqlite3) (MIT license)
+    - SQLite database [https://www.sqlite.org/](https://www.sqlite.org) (Public Domain)
+- Zstd wrapper [https://github.com/DataDog/zstd](https://github.com/DataDog/zstd) (Simplified BSD-3-Clause license)
+    - Zstandard [https://github.com/facebook/zstd](https://github.com/facebook/zstd) (BSD and GPL-2.0, dual licensed)
+- goproxy [https://github.com/elazarl/goproxy](https://github.com/elazarl/goproxy) (BSD-3-Clause license)
+- retryablehttp [https://github.com/hashicorp/go-retryablehttp](https://github.com/hashicorp/go-retryablehttp) (MPL-2.0 license)
+- cleanhttp [https://github.com/hashicorp/go-cleanhttp](https://github.com/hashicorp/go-cleanhttp) (MPL-2.0 license)
+- publicsuffix [https://github.com/weppos/publicsuffix-go](https://github.com/weppos/publicsuffix-go) (MIT icense)
+- Go standard library. (BSD-style license)
+- [Ginkgo](https://onsi.github.io/ginkgo/) and [Gomega](https://onsi.github.io/gomega/) are used in the tests. (MIT license)
 
 — Many thanks to their authors and contributors.
 
