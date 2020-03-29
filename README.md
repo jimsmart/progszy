@@ -130,12 +130,12 @@ $ go test -coverprofile=coverage.out && go tool cover -html=coverage.out
 Packages used by progszy (and their licensing):
 
 - SQLite driver [https://github.com/mattn/go-sqlite3](https://github.com/mattn/go-sqlite3) (MIT license)
-    - SQLite database [https://www.sqlite.org/](https://www.sqlite.org) (Public Domain)
-- Zstd wrapper [https://github.com/DataDog/zstd](https://github.com/DataDog/zstd) (Simplified BSD-3-Clause license)
-    - Zstandard [https://github.com/facebook/zstd](https://github.com/facebook/zstd) (BSD and GPL-2.0, dual licensed)
-- goproxy [https://github.com/elazarl/goproxy](https://github.com/elazarl/goproxy) (BSD-3-Clause license)
-- retryablehttp [https://github.com/hashicorp/go-retryablehttp](https://github.com/hashicorp/go-retryablehttp) (MPL-2.0 license)
-- cleanhttp [https://github.com/hashicorp/go-cleanhttp](https://github.com/hashicorp/go-cleanhttp) (MPL-2.0 license)
+    - SQLite database [https://www.sqlite.org/](https://www.sqlite.org) (Public Domain, explicit)
+- Zstd wrapper [https://github.com/DataDog/zstd](https://github.com/DataDog/zstd) (Simplified BSD 3-Clause license)
+    - Zstandard [https://github.com/facebook/zstd](https://github.com/facebook/zstd) (BSD and GPL 2.0, dual licensed)
+- goproxy [https://github.com/elazarl/goproxy](https://github.com/elazarl/goproxy) (BSD 3-Clause license)
+- retryablehttp [https://github.com/hashicorp/go-retryablehttp](https://github.com/hashicorp/go-retryablehttp) (MPL 2.0 license)
+- cleanhttp [https://github.com/hashicorp/go-cleanhttp](https://github.com/hashicorp/go-cleanhttp) (MPL 2.0 license)
 - publicsuffix [https://github.com/weppos/publicsuffix-go](https://github.com/weppos/publicsuffix-go) (MIT license)
 - Go standard library. (BSD-style license)
 - [Ginkgo](https://onsi.github.io/ginkgo/) and [Gomega](https://onsi.github.io/gomega/) are used in the tests. (MIT license)
