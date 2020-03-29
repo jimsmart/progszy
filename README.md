@@ -136,7 +136,7 @@ Packages used by progszy (and their licensing):
 - goproxy [https://github.com/elazarl/goproxy](https://github.com/elazarl/goproxy) (BSD-3-Clause license)
 - retryablehttp [https://github.com/hashicorp/go-retryablehttp](https://github.com/hashicorp/go-retryablehttp) (MPL-2.0 license)
 - cleanhttp [https://github.com/hashicorp/go-cleanhttp](https://github.com/hashicorp/go-cleanhttp) (MPL-2.0 license)
-- publicsuffix [https://github.com/weppos/publicsuffix-go](https://github.com/weppos/publicsuffix-go) (MIT icense)
+- publicsuffix [https://github.com/weppos/publicsuffix-go](https://github.com/weppos/publicsuffix-go) (MIT license)
 - Go standard library. (BSD-style license)
 - [Ginkgo](https://onsi.github.io/ginkgo/) and [Gomega](https://onsi.github.io/gomega/) are used in the tests. (MIT license)
 
