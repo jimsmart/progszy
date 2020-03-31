@@ -128,7 +128,11 @@ func proxyHandler(cache Cache) func(*http.Request) *http.Response {
 			case http.MethodGet:
 				body := cr.Body()
 				defer body.Close()
-				// We have to copy this, it panics if we simply return the body reader.
+				// TODO Better to use ioutil.ReadAll here maybe?
+
+				// We have to copy the body, something panics if we simply return the body reader.
+				// TODO There is still a distinct code smell here. (re: copying returned response from db)
+
 				buf := &bytes.Buffer{}
 				_, err := io.Copy(buf, body)
 				if err != nil {
