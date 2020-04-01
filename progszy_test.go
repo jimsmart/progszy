@@ -37,7 +37,7 @@ var _ = Describe("Progszy", func() {
 		// cache = progszy.NewMemCache()
 		cache = progszy.NewSqliteCache(testCachePath)
 		// server = httptest.NewServer(http.HandlerFunc(progszy.ProxyHandlerWith(cache)))
-		server = httptest.NewServer(progszy.ProxyHandlerWith(cache))
+		server = httptest.NewServer(progszy.ProxyHandlerWith(cache, nil))
 		// fmt.Println("server started")
 		// proxyURL = "https" + server.URL[4:]
 		proxyURL = server.URL

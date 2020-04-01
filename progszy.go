@@ -30,27 +30,27 @@ const maxBodySize = 64 * 1024 * 1024 // 64mb
 // const maxBodySize = 16 * 1024 * 1024 // 16mb
 // const maxBodySize = 1 * 1024 * 1024 // 1mb
 
-func ProxyHandlerWith(cache Cache) http.Handler {
+func ProxyHandlerWith(cache Cache, proxy *url.URL) http.Handler {
 
-	proxy := goproxy.NewProxyHttpServer()
+	p := goproxy.NewProxyHttpServer()
 	// TODO Control goproxy logging from outside.
 	// proxy.Verbose = true
-	proxy.OnRequest().HandleConnect(goproxy.AlwaysMitm)
+	p.OnRequest().HandleConnect(goproxy.AlwaysMitm)
 
-	handler := proxyHandler(cache)
+	handler := proxyHandler(cache, proxy)
 
-	proxy.OnRequest().DoFunc(func(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Request, *http.Response) {
+	p.OnRequest().DoFunc(func(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Request, *http.Response) {
 		return nil, handler(req)
 	})
 
-	return proxy
+	return p
 }
 
 // TODO Arguably we should implement some kind of ResponseWriter, instead of manually building the response?
 
 // ----------------------------
 
-func proxyHandler(cache Cache) func(*http.Request) *http.Response {
+func proxyHandler(cache Cache, proxy *url.URL) func(*http.Request) *http.Response {
 
 	// Parse incoming HTTP request.
 	// Get requested URL.
@@ -63,7 +63,7 @@ func proxyHandler(cache Cache) func(*http.Request) *http.Response {
 	// Store response in cache.
 	// Return response.
 
-	handleCacheMiss := makeCacheMissHandler()
+	handleCacheMiss := makeCacheMissHandler(proxy)
 
 	return func(r *http.Request) *http.Response {
 
@@ -155,11 +155,11 @@ func proxyHandler(cache Cache) func(*http.Request) *http.Response {
 	}
 }
 
-func makeCacheMissHandler() func(r *http.Request, uri string, cache Cache) *http.Response {
+func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cache Cache) *http.Response {
 
 	rulesCache := newRulesMap()
-	secureClient := newClient(false)
-	insecureClient := newClient(true)
+	secureClient := newClient(false, proxy)
+	insecureClient := newClient(true, proxy)
 
 	return func(r *http.Request, uri string, cache Cache) *http.Response {
 
@@ -352,7 +352,7 @@ var (
 
 var acceptAllCerts = &tls.Config{InsecureSkipVerify: true}
 
-func newClient(insecure bool) *retryablehttp.Client {
+func newClient(insecure bool, proxy *url.URL) *retryablehttp.Client {
 	// TODO Client configuration - see https://medium.com/@nate510/don-t-use-go-s-default-http-client-4804cb19f779
 
 	// TODO Note that because we use a retrying client, this means outgoing HTTP requests can now take a longer time.
@@ -373,9 +373,12 @@ func newClient(insecure bool) *retryablehttp.Client {
 
 	// tr := &http.Transport{Proxy: http.ProxyURL(u), TLSClientConfig: acceptAllCerts}
 
+	tr := client.HTTPClient.Transport.(*http.Transport)
 	if insecure {
-		tr := client.HTTPClient.Transport.(*http.Transport)
 		tr.TLSClientConfig = acceptAllCerts
+	}
+	if proxy != nil {
+		tr.Proxy = http.ProxyURL(proxy)
 	}
 
 	return client

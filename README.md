@@ -44,7 +44,7 @@ Incoming requests can be either vanilla HTTP, or can be HTTPS (using `CONNECT` p
 
 When proxying HTTPS requests, the connection is intercepted by a man-in-the-middle (MITM) hijack, to allow both caching and the application of rules, and the resulting outbound stream is then re-encrypted using a private certificate, before being passed to the client. Note that clients wishing to proxy HTTPS requests using progszy will need specific configuration to prevent/ignore the resulting certificate mismatch errors caused by this process. See tests for an example of how this is done in Go.
 
-Outgoing HTTP requests utilise automatic retries with exponential backoff. Internal HTTP clients use a shared transport with pooling. Connections are not explicitly rate-limited.
+Outgoing HTTP requests utilise automatic retries with exponential backoff. Internal HTTP clients use a shared transport with pooling, and support upstream proxy chaining. Connections are not explicitly rate-limited. 
 
 Currently, progszy only supports HTTP `GET`, `HEAD` and `CONNECT` methods. Note that support for the `HEAD` method is not actually particularly useful in this context, and really only exists for spec compliance.
 
@@ -91,6 +91,8 @@ Usage of ./progszy:
     	Cache location (default "./cache")
   -port int
     	Port number to listen on (default 5595)
+  -proxy string
+    	Upstream HTTP(S) proxy URL (e.g. "http://10.0.0.1:8080")
 ```
 
 Run progszy with default settings:
@@ -104,8 +106,9 @@ Listening on port 5595
 Run using custom configuration:
 
 ```bash
-$ ./progszy -port 8080 -cache /foo/bar/store
+$ ./progszy -port 8080 -cache /foo/bar/store -proxy http://10.10.0.1:9000
 Cache location /foo/bar/store
+Upstream proxy http://10.10.0.1:9080
 Listening on port 8080
 ```
 

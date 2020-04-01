@@ -4,13 +4,14 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
 	"time"
 )
 
 // Run a server, blocking until we receive OS interrupt (ctrl-C).
-func Run(addr, cachePath string) {
+func Run(addr, cachePath string, proxy *url.URL) {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 
@@ -19,14 +20,19 @@ func Run(addr, cachePath string) {
 
 	// TODO(js) Create cache folder if missing?
 
+	// TODO Startup messages - to log or fmt.Print/stdout?
+
 	logger.Printf("Cache location %s\n", cachePath)
+	if proxy != nil {
+		logger.Printf("Upstream proxy %s\n", proxy.String())
+	}
 
 	cache := NewSqliteCache(cachePath)
 	// s := NewServer(func(s *Server) { s.logger = logger })
 	h := &http.Server{
 		Addr: addr,
 		// Handler: http.HandlerFunc(ProxyHandlerWith(cache)),
-		Handler: ProxyHandlerWith(cache),
+		Handler: ProxyHandlerWith(cache, proxy),
 	}
 
 	go func() {

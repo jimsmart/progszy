@@ -61,13 +61,6 @@ SQLite cache rotation/archival method
 - Move/archive/create new db.
 
 
-Proxy chaining
---------------
-- Not essential initially.
-- Set upstream proxy URL via CLI param.
- - See https://www.admfactory.com/how-to-setup-a-proxy-for-http-client-in-golang/
-   or see existing scraper code.
-
 
 Controls via HTTP headers
 -------------------------
@@ -84,6 +77,7 @@ HTTP Client / Server tuning
 
 Cleanups
 --------
+- Remove dead TODOs, review commented out chunks.
 - Create cache folder if it does not exist?
 - The main request handler is getting crufty.
 - Disable existing logging
@@ -98,6 +92,7 @@ Cleanups
 Testing
 -------
 - Test all 'fiddly' headers work as intended (ETag, etc)
+- Explicitly test upstream proxy.
 
 
 Language / lang negotiation
@@ -181,6 +176,11 @@ Config file
 
 DONE
 ====
+
+Proxy chaining
+--------------
+- Set upstream proxy URL via CLI param - Done
+
 
 Improve Cache interface
 -----------------------
