@@ -108,7 +108,7 @@ Run using custom configuration:
 ```bash
 $ ./progszy -port 8080 -cache /foo/bar/store -proxy http://10.10.0.1:9000
 Cache location /foo/bar/store
-Upstream proxy http://10.10.0.1:9080
+Upstream proxy http://10.10.0.1:9000
 Listening on port 8080
 ```
 
