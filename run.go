@@ -2,6 +2,7 @@ package progszy
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -11,18 +12,30 @@ import (
 )
 
 // Run a server, blocking until we receive OS interrupt (ctrl-C).
-func Run(addr, cachePath string, proxy *url.URL) {
+func Run(addr, cachePath string, proxy *url.URL) error {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 
 	// TODO(js) Use this throughout?
-	logger := log.New(os.Stdout, "", 0)
+	logger := log.New(os.Stderr, "", 0)
 
 	// TODO(js) Create cache folder if missing?
 
 	// TODO Startup messages - to log or fmt.Print/stdout?
 
+	stat, err := os.Stat(cachePath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			logger.Printf("Cache folder does not exist %s\n", cachePath)
+		}
+		return err
+	}
+	if !stat.IsDir() {
+		logger.Printf("Cache location must be a folder %s\n", cachePath)
+		return fmt.Errorf("Location not a folder %s")
+	}
 	logger.Printf("Cache location %s\n", cachePath)
+
 	if proxy != nil {
 		logger.Printf("Upstream proxy %s\n", proxy.String())
 	}
@@ -55,10 +68,11 @@ func Run(addr, cachePath string, proxy *url.URL) {
 
 	h.Shutdown(ctx)
 
-	err := cache.CloseAll()
+	err = cache.CloseAll()
 	if err != nil {
 		logger.Printf("Error closing cache %v\n", err)
 	}
 
 	logger.Println("Server stopped")
+	return err
 }

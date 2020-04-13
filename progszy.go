@@ -25,7 +25,7 @@ import (
 // The spec says it shouldn't be more than 50mb, but it's difficult to argue with the reality of the situation.
 
 // maxBodySize is the maximum number of bytes to read from the response body.
-const maxBodySize = 64 * 1024 * 1024 // 64mb
+const maxBodySize = 128 * 1024 * 1024 // 128mb
 
 // const maxBodySize = 16 * 1024 * 1024 // 16mb
 // const maxBodySize = 1 * 1024 * 1024 // 1mb
@@ -113,6 +113,17 @@ func proxyHandler(cache Cache, proxy *url.URL) func(*http.Request) *http.Respons
 		}
 
 		// log.Printf("============requested uri %s", uri)
+
+		if r.Header.Get("X-Cache-Flush") == "TRUE" {
+			err := cache.Flush(uri)
+			if err != nil {
+				m := fmt.Sprintf("Cache flush error %s", err)
+				return httpError(r, m, http.StatusBadRequest)
+			}
+			resp := newResponse(r, http.StatusOK)
+			resp.Header.Set("X-Cache", "FLUSHED")
+			return resp
+		}
 
 		// Try to get from cache.
 		cr, err := cache.Get(uri)
@@ -210,6 +221,7 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 		}
 		if lr.N == 0 {
 			// Exceeded max body size.
+			io.Copy(ioutil.Discard, response.Body)
 			max := byteCountDecimal(maxBodySize)
 			m := fmt.Sprintf("Body exceeds maximum size (%s)", max)
 			log.Println(m)
@@ -284,6 +296,7 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 }
 
 func applyCommonHeaders(resp *http.Response, cr *CacheRecord) {
+	resp.Header.Set("X-Cache-Timestamp", cr.Created.Format(time.RFC3339))
 	resp.Header.Set("Content-Length", strconv.Itoa(int(cr.ContentLength)))
 	if len(cr.ContentType) > 0 {
 		resp.Header.Set("Content-Type", cr.ContentType)

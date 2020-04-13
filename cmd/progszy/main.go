@@ -25,13 +25,13 @@ func main() {
 	listenAddr := ":" + strconv.Itoa(*portParam)
 
 	cachePath := *cacheParam
-	if !filepath.IsAbs(cachePath) {
-		cachePath, err = filepath.Abs(cachePath)
-		if err != nil {
-			fmt.Printf("Error: %s", err)
-			os.Exit(1)
-		}
+	// if !filepath.IsAbs(cachePath) {
+	cachePath, err = filepath.Abs(cachePath)
+	if err != nil {
+		fmt.Printf("Error: %s", err)
+		os.Exit(1)
 	}
+	// }
 
 	var proxy *url.URL
 	if len(*proxyParam) > 0 {
@@ -42,5 +42,9 @@ func main() {
 		}
 	}
 
-	progszy.Run(listenAddr, cachePath, proxy)
+	err = progszy.Run(listenAddr, cachePath, proxy)
+	if err != nil {
+		fmt.Printf("Error: %s", err)
+		os.Exit(1)
+	}
 }

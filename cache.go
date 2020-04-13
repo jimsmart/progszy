@@ -21,6 +21,7 @@ type Cache interface {
 	Get(uri string) (*CacheRecord, error)
 	Put(cr *CacheRecord) error
 	CloseAll() error
+	Flush(uri string) error
 }
 
 // TODO Add Head method, using cached info.

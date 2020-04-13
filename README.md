@@ -30,7 +30,7 @@ progszy intentionally makes no use of HTTP headers relating to cached content co
 
 The body content and appropriate headers for all `200 Ok` responses are hard-cached — unless the body matches a given filter (see `X-Cache-Reject`, below).
 
-Content exceeding an arbitrary maximum body size of 64mb is not cached nor proxied, and instead returns a `412 Precondition Failed` response to the client. We may review this decision/behaviour at a later date.
+Content exceeding an arbitrary maximum body size of 128mb is not cached nor proxied, and instead returns a `412 Precondition Failed` response to the client. We may review this decision/behaviour at a later date.
 
 Cache eviction/management is manual-only at present. Later we will add a REST API for programmatic cache management.
 
@@ -56,13 +56,16 @@ progszy makes use of custom HTTP `X-*` headers to both control features and repo
  
  - `X-Cache-Reject` headers control early rejection/filtering of incoming content. Each header value is compiled into a regexp reject rule: if the content body matches any filter, the request response is not cached, and instead a `412 Precondition Failed` is returned to the client. See tests for example usage. Note that cache hits (requests for already cached content) are not currently affected by the use of this header.
  - `X-Cache-SSL: INSECURE` forces use of an internal HTTP client configured to skip SSL certificate validation during the upstream/outbound request. See tests for example usage.
+ - `X-Cache-Flush: TRUE` forces the creation of a new cache database bin for the requested URL.
 
 Incoming `X-*` headers are not copied to outgoing requests.
 
 #### Response Headers
 
- - `X-Cache` value will be `HIT` or `MISS` accordingly.
- - `Content-Type`, `Content-Language`, `ETag` and `Last-Modified` headers on incoming responses all have their value persisted to the cache, and restored appropriately on outgoing responses to the client.
+ - `X-Cache` value will be `HIT`, `MISS` or `FLUSHED` accordingly.
+ - `X-Cache-Timestamp` indicates when the content was originally cached (RFC3339 format).
+ - `Content-Length` value is set accordingly.
+ - `Content-Type`, `Content-Language`, `ETag` and `Last-Modified` headers from incoming responses all have their value persisted to the cache, and restored appropriately on outgoing responses to the client.
 
 ## Installation
 

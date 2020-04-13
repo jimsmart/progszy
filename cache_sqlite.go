@@ -147,6 +147,34 @@ func (c *SqliteCache) CloseAll() error {
 	return nil
 }
 
+func (c *SqliteCache) Flush(uri string) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	_, bd, err := cacheRecordKey(uri)
+	if err != nil {
+		return err
+	}
+	log.Printf("Flushing cache for %s", bd)
+
+	// TODO Can we be cleverer when we flush? e.g. Check if existing db is empty, if so, remove it.
+	// TODO Also, if no db exists in map, and no db exists on filesystem, don't bother creating a new db. (It will happen automatically on first Put)
+
+	// Close existing db, if it exists.
+	db := c.dbByBaseDomain[bd]
+	if db != nil {
+		err = db.Close()
+		if err != nil {
+			// TODO(js) Improve error handling.
+			log.Printf("Error closing %s db: %v", bd, err)
+		}
+	}
+
+	// Create a new db.
+	_, err = c.createDB(bd)
+	return err
+}
+
 // findDatabase()
 //  - do we know its file location already?
 //   - use domain-slug as map key, rlock the map first.
@@ -174,7 +202,7 @@ func (c *SqliteCache) getOrCreateDB(bd string) (*sql.DB, error) {
 		return db, nil
 	}
 	// Not found, we must create a new db.
-	return c.createDB(bd)
+	return c.findOrCreateDB(bd)
 }
 
 func (c *SqliteCache) getDB(bd string) (*sql.DB, error) {
@@ -197,7 +225,7 @@ func (c *SqliteCache) getDB(bd string) (*sql.DB, error) {
 	return db, nil
 }
 
-func (c *SqliteCache) createDB(bd string) (*sql.DB, error) {
+func (c *SqliteCache) findOrCreateDB(bd string) (*sql.DB, error) {
 	// Check with more expensive wlock.
 	// (Assumes we've already checked with rlock alone.)
 	c.mu.Lock()
@@ -222,8 +250,15 @@ func (c *SqliteCache) createDB(bd string) (*sql.DB, error) {
 	}
 
 	// No, we must make a new db.
+	return c.createDB(bd)
+}
+
+func (c *SqliteCache) createDB(bd string) (*sql.DB, error) {
+	// (Assumes we're already wlocked.)
+
+	// Make a new db.
 	filename := filepath.Join(c.path, bd+"-"+timestamp()+fileExt)
-	db, err = createDB(filename)
+	db, err := createDB(filename)
 	if err != nil {
 		return nil, err
 	}

@@ -77,6 +77,7 @@ HTTP Client / Server tuning
 
 Cleanups
 --------
+- Failed X-Cache-* commands (unknown values) should return an error 500.
 - Remove dead TODOs, review commented out chunks.
 - Create cache folder if it does not exist?
 - The main request handler is getting crufty.
