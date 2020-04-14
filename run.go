@@ -43,7 +43,7 @@ func Run(addr, cachePath string, proxy *url.URL) error {
 	cache := NewSqliteCache(cachePath)
 	// s := NewServer(func(s *Server) { s.logger = logger })
 	h := &http.Server{
-		Addr: addr,
+		Addr: "127.0.0.1" + addr,
 		// Handler: http.HandlerFunc(ProxyHandlerWith(cache)),
 		Handler: ProxyHandlerWith(cache, proxy),
 	}
