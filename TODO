@@ -17,6 +17,15 @@ Default compression (5):
 
 
 
+From scraper TODO:
+
+- progszy
+ - Closing body without reading it all causes an ugly warning to be logged.
+ - Disconnecting part way through transfer (e.g. by ctrl+c the client) causes similar.
+ - Can we disable goproxy's logging - entirely? disable / filter out warnings? 
+
+
+
 Progszy
 =======
 
