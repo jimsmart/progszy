@@ -139,18 +139,18 @@ func proxyHandler(cache Cache, proxy *url.URL) func(*http.Request) *http.Respons
 			case http.MethodGet:
 				body := cr.Body()
 				defer body.Close()
-				// TODO Better to use ioutil.ReadAll here maybe?
 
 				// We have to copy the body, something panics if we simply return the body reader.
 				// TODO There is still a distinct code smell here. (re: copying returned response from db)
+				// - Insight: is it because cr.Body gets closed early?
 
-				buf := &bytes.Buffer{}
-				_, err := io.Copy(buf, body)
+				b, err := ioutil.ReadAll(body)
 				if err != nil {
-					log.Printf("io.Copy error during GET: %v\n", err)
+					log.Printf("ioutil.ReadAll error during GET: %v\n", err)
 					return httpError(r, fmt.Sprint(err), http.StatusInternalServerError)
 				}
-				resp.Body = ioutil.NopCloser(buf)
+				resp.Body = ioutil.NopCloser(bytes.NewReader(b))
+
 				log.Printf("decompressed content size %s", byteCountDecimal(cr.ContentLength))
 			case http.MethodHead:
 				// No action.
