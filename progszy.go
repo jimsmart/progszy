@@ -204,10 +204,6 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 			log.Printf("client.Do error: %v\n", err)
 			return httpError(r, fmt.Sprint(err), http.StatusInternalServerError)
 		}
-		rdur := time.Since(rstart)
-		log.Printf("upstream request duration %v", rdur)
-		responseTime := float64(rdur) / float64(time.Millisecond)
-
 		defer response.Body.Close()
 
 		// TODO Should we check content type is text/HTML/JSON/CSS (not binary data) ?
@@ -227,6 +223,12 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 			log.Println(m)
 			return httpError(r, m, http.StatusPreconditionFailed)
 		}
+
+		rend := time.Now()
+		resp.Header.Set("X-Cache-Fetched", rend.Format(time.RFC3339))
+		rdur := rend.Sub(rstart)
+		log.Printf("upstream request/response duration %v", rdur)
+		responseTime := float64(rdur) / float64(time.Millisecond)
 
 		// Check status code is good - we only accept 200 ok (the client handles redirects).
 		if response.StatusCode != 200 {
@@ -296,7 +298,7 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 }
 
 func applyCommonHeaders(resp *http.Response, cr *CacheRecord) {
-	resp.Header.Set("X-Cache-Timestamp", cr.Created.Format(time.RFC3339))
+	resp.Header.Set("X-Cache-Fresh", cr.Created.Format(time.RFC3339))
 	resp.Header.Set("Content-Length", strconv.Itoa(int(cr.ContentLength)))
 	if len(cr.ContentType) > 0 {
 		resp.Header.Set("Content-Type", cr.ContentType)
