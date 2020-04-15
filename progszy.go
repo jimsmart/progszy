@@ -206,6 +206,11 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 		}
 		defer response.Body.Close()
 
+		rend := time.Now()
+		rdur := rend.Sub(rstart)
+		responseTime := float64(rdur) / float64(time.Millisecond)
+		resp.Header.Set("X-Cache-Served", rend.Format(time.RFC3339Nano))
+
 		// TODO Should we check content type is text/HTML/JSON/CSS (not binary data) ?
 
 		// Read the response body, limiting the max size.
@@ -223,10 +228,7 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 			log.Println(m)
 			return httpError(r, m, http.StatusPreconditionFailed)
 		}
-		rend := time.Now()
-		rdur := rend.Sub(rstart)
-		log.Printf("upstream request/response duration %v", rdur)
-		responseTime := float64(rdur) / float64(time.Millisecond)
+		log.Printf("upstream request/response duration %v", time.Now().Sub(rstart))
 
 		// Check status code is good - we only accept 200 ok (the client handles redirects).
 		if response.StatusCode != 200 {
@@ -237,8 +239,6 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 			log.Println(m)
 			return httpError(r, m, response.StatusCode)
 		}
-
-		resp.Header.Set("X-Cache-Served", rend.Format(time.RFC3339Nano))
 
 		// Check page body against reject rules.
 
