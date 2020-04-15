@@ -64,6 +64,7 @@ Incoming `X-*` headers are not copied to outgoing requests.
 
  - `X-Cache` value will be `HIT`, `MISS` or `FLUSHED` accordingly.
  - `X-Cache-Fresh` indicates when the content was originally cached (RFC3339 format with nanosecond precision).
+ - `X-Cache-Served` (only on cache misses) indicates when the upstream server response finished reading (RFC3339 format with nanosecond precision).
  - `Content-Length` value is set accordingly.
  - `Content-Type`, `Content-Language`, `ETag` and `Last-Modified` headers from incoming responses all have their value persisted to the cache, and restored appropriately on outgoing responses to the client.
 

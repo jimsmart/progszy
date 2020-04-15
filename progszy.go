@@ -223,8 +223,8 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 			log.Println(m)
 			return httpError(r, m, http.StatusPreconditionFailed)
 		}
-
-		rdur := time.Now().Sub(rstart)
+		rend := time.Now()
+		rdur := rend.Sub(rstart)
 		log.Printf("upstream request/response duration %v", rdur)
 		responseTime := float64(rdur) / float64(time.Millisecond)
 
@@ -237,6 +237,8 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 			log.Println(m)
 			return httpError(r, m, response.StatusCode)
 		}
+
+		resp.Header.Set("X-Cache-Served", rend.Format(time.RFC3339Nano))
 
 		// Check page body against reject rules.
 
