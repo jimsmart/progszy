@@ -224,9 +224,7 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 			return httpError(r, m, http.StatusPreconditionFailed)
 		}
 
-		rend := time.Now()
-		resp.Header.Set("X-Cache-Fetched", rend.Format(time.RFC3339))
-		rdur := rend.Sub(rstart)
+		rdur := time.Now().Sub(rstart)
 		log.Printf("upstream request/response duration %v", rdur)
 		responseTime := float64(rdur) / float64(time.Millisecond)
 
