@@ -209,7 +209,6 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 		rend := time.Now()
 		rdur := rend.Sub(rstart)
 		responseTime := float64(rdur) / float64(time.Millisecond)
-		resp.Header.Set("X-Cache-Served", rend.Format(time.RFC3339Nano))
 
 		// TODO Should we check content type is text/HTML/JSON/CSS (not binary data) ?
 
@@ -273,7 +272,7 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 		lastMod := resp.Header.Get("Last-Modified")
 
 		// Put asset in the cache.
-		cr, err := NewCacheRecord(uri, lang, mime, etag, lastMod, body, responseTime)
+		cr, err := NewCacheRecord(uri, lang, mime, etag, lastMod, body, responseTime, rend)
 		if err != nil {
 			log.Printf("Error creating CacheRecord: %v\n", err)
 			return httpError(r, fmt.Sprint(err), http.StatusInternalServerError)
@@ -298,7 +297,7 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 }
 
 func applyCommonHeaders(resp *http.Response, cr *CacheRecord) {
-	resp.Header.Set("X-Cache-Fresh", cr.Created.Format(time.RFC3339Nano))
+	resp.Header.Set("X-Cache-Cached", cr.Created.Format(time.RFC3339Nano))
 	resp.Header.Set("Content-Length", strconv.Itoa(int(cr.ContentLength)))
 	if len(cr.ContentType) > 0 {
 		resp.Header.Set("Content-Type", cr.ContentType)

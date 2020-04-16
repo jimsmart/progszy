@@ -99,7 +99,7 @@ func (r *CacheRecord) SetBody(body []byte) error {
 
 // TODO cacheRecord should hold ETag, LastModified, Content-Length(?), md5(?)
 
-func NewCacheRecord(uri, lang, mime, etag, lastMod string, body []byte, responseTime float64) (*CacheRecord, error) {
+func NewCacheRecord(uri, lang, mime, etag, lastMod string, body []byte, responseTime float64, created time.Time) (*CacheRecord, error) {
 
 	nurl, bd, err := cacheRecordKey(uri)
 	if err != nil {
@@ -115,7 +115,7 @@ func NewCacheRecord(uri, lang, mime, etag, lastMod string, body []byte, response
 		ETag:            etag,
 		LastModified:    lastMod,
 		ResponseTime:    responseTime,
-		Created:         time.Now(),
+		Created:         created,
 	}
 
 	err = r.SetBody(body)

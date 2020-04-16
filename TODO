@@ -14,7 +14,8 @@ Default compression (5):
   scraper from cold = ~200s
 
 
-
+Consider removing one of the timestamp headers?
+Consider renaming X-Cache-Fresh to X-Cache-Cached
 
 
 From scraper TODO:
