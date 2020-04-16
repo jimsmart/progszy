@@ -79,13 +79,13 @@ First, ensure you have a working Go environment. TODO
 
 Then fetch the code:
 
-```
+```bash
 go get github.com/jimsmart/progszy
 ```
 
 And install it:
 
-```
+```bash
 go install github.com/jimsmart/progszy/cmd/progszy
 ```
 
