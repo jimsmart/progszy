@@ -60,7 +60,7 @@ Incoming `X-*` headers are not copied to outgoing requests.
 
 #### Response Headers
 
- - `X-Cache` value will be `HIT`, `MISS` or `FLUSHED` accordingly.
+ - `X-Cache` value will be `HIT`, `MISS` or `FLUSHED` accordingly. For cache hits and misses, the following headers are also present:
  - `X-Cache-Cached` indicates when the content was originally cached (RFC3339 format with nanosecond precision).
  - `Content-Length` value is set accordingly.
  - `Content-Type`, `Content-Language`, `ETag` and `Last-Modified` headers from incoming responses all have their value persisted to the cache, and restored appropriately on outgoing responses to the client.
@@ -89,8 +89,7 @@ And install it:
 go install github.com/jimsmart/progszy/cmd/progszy
 ```
 
-By default (assuming no customisation has been made to `$GOPATH` or `$GOBIN`), the resulting binary executable will be `~/go/bin/progszy`.
-
+By default, the resulting binary executable will be `~/go/bin/progszy` (assuming no customisation has been made to `$GOPATH` or `$GOBIN`).
 
 ## Usage Examples
 
