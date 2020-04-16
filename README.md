@@ -75,9 +75,22 @@ TODO Document any runtime dependencies - I believe the binary should be standalo
 
 ### Build From Source
 
-TODO 
+First, ensure you have a working Go environment. TODO
 
-TODO Document build-time dependencies that require preinstallation: Sqlite? gcc toolchain to build zstd?
+Then fetch the code:
+
+```
+go get github.com/jimsmart/progszy
+```
+
+And install it:
+
+```
+go install github.com/jimsmart/progszy/cmd/progszy
+```
+
+By default (assuming no customisation has been made to `$GOPATH` or `$GOBIN`), the resulting binary executable will be `~/go/bin/progszy`.
+
 
 ## Usage Examples
 
