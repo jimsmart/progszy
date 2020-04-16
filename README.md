@@ -18,7 +18,7 @@ progszy should work with any HTTP client, but currently has only been tested wit
 
 Cached content is persisted in an [SQLite](https://www.sqlite.org) database, using [Zstandard](https://www.zstd.net) compression, enabling cached content to be retrieved [faster](https://www.sqlite.org/fasterthanfs.html) than regular file system reads, while also providing convenient packaging of cached content and saving storage space.
 
-A separate single-file database is created per domain, to cache its respective content (that is: content is 'binned' according to the domain's base/root name). Database filenames also contain a creation timestamp. 
+A separate single-file database is created per domain, to cache its respective content (that is: content is 'binned' according to the root domain name). Database filenames also contain a creation timestamp. 
 
 For example, request responses for `http://www.example.com/index.html` and `http://foo.bar.example.com/index.html` will both get cached in the same database, having a filename like `example.com-2020-03-20-1640.sqlite`.
 

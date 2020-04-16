@@ -30,6 +30,8 @@ From scraper TODO:
 Progszy
 =======
 
+- Selectable binning strategy? CLI param, binby(binkey?) = fqdn|root (default=root)
+
 - Check cache folder location exists on startup, otherwise fail to start.
 
 - Would be nice to format durations better.
