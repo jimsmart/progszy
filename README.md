@@ -26,7 +26,7 @@ We may review/change this binning/naming strategy at a later date.
 
 ### Caching Strategy
 
-progszy intentionally makes no use of HTTP headers relating to cached content control that are normally utilised by browsers and other caching proxies.
+progszy *intentionally* makes **no** use of HTTP headers relating to cached content control that are normally utilised by browsers and other caching proxies.
 
 The body content and appropriate headers for all `200 Ok` responses are hard-cached — unless the body matches a given filter (see `X-Cache-Reject`, below).
 
