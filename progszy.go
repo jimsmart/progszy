@@ -266,10 +266,10 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 		}
 
 		// Get metadata headers.
-		lang := resp.Header.Get("Content-Language")
-		mime := resp.Header.Get("Content-Type")
-		etag := resp.Header.Get("ETag")
-		lastMod := resp.Header.Get("Last-Modified")
+		lang := response.Header.Get("Content-Language")
+		mime := response.Header.Get("Content-Type")
+		etag := response.Header.Get("ETag")
+		lastMod := response.Header.Get("Last-Modified")
 
 		// Put asset in the cache.
 		cr, err := NewCacheRecord(uri, lang, mime, etag, lastMod, body, responseTime, rend)

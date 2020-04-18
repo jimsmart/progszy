@@ -76,6 +76,9 @@ var _ = Describe("Progszy", func() {
 		ch := resp.Header.Get("X-Cache")
 		Expect(ch).To(Equal("MISS"))
 
+		mime := resp.Header.Get("Content-Type")
+		Expect(mime).To(Equal("text/html"))
+
 		c.CloseIdleConnections()
 	})
 
@@ -156,6 +159,9 @@ var _ = Describe("Progszy", func() {
 		ch1 := resp1.Header.Get("X-Cache")
 		Expect(ch1).To(Equal("MISS"))
 
+		mime1 := resp1.Header.Get("Content-Type")
+		Expect(mime1).To(Equal("text/html"))
+
 		resp2, err := c.Get("http://books.toscrape.com/")
 		Expect(err).To(BeNil())
 
@@ -170,6 +176,9 @@ var _ = Describe("Progszy", func() {
 
 		ch2 := resp2.Header.Get("X-Cache")
 		Expect(ch2).To(Equal("HIT"))
+
+		mime2 := resp1.Header.Get("Content-Type")
+		Expect(mime2).To(Equal("text/html"))
 
 		c.CloseIdleConnections()
 	})
