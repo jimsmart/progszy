@@ -129,7 +129,7 @@ var _ = Describe("Cache", func() {
 			content := []byte("fake-content")
 
 			c := progszy.NewSqliteCache(testCachePath)
-			cr, err := progszy.NewCacheRecord("http://example.com/", "", "text/html", "", "", content, 0, time.Now())
+			cr, err := progszy.NewCacheRecord("http://example.com/", 200, "", "", "text/html", "", "", content, 0, time.Now())
 			Expect(err).To(BeNil())
 			err = c.Put(cr)
 			Expect(err).To(BeNil())

@@ -40,6 +40,10 @@ type CacheRecord struct {
 	URL string
 	// BaseDomain is the friendly domain name.
 	BaseDomain string
+	// Status code of response.
+	Status int
+	// Protocol originally used for response.
+	Protocol string
 	// ContentLanguage value (or empty string).
 	ContentLanguage string
 	// ContentType is the MIME type.
@@ -99,7 +103,7 @@ func (r *CacheRecord) SetBody(body []byte) error {
 
 // TODO cacheRecord should hold ETag, LastModified, Content-Length(?), md5(?)
 
-func NewCacheRecord(uri, lang, mime, etag, lastMod string, body []byte, responseTime float64, created time.Time) (*CacheRecord, error) {
+func NewCacheRecord(uri string, status int, proto, lang, mime, etag, lastMod string, body []byte, responseTime float64, created time.Time) (*CacheRecord, error) {
 
 	nurl, bd, err := cacheRecordKey(uri)
 	if err != nil {
@@ -110,6 +114,8 @@ func NewCacheRecord(uri, lang, mime, etag, lastMod string, body []byte, response
 		Key:             nurl,
 		URL:             uri,
 		BaseDomain:      bd,
+		Status:          status,
+		Protocol:        proto,
 		ContentLanguage: lang,
 		ContentType:     mime,
 		ETag:            etag,

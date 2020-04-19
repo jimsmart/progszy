@@ -14,9 +14,8 @@ Default compression (5):
   scraper from cold = ~200s
 
 
-Consider removing one of the timestamp headers?
-Consider renaming X-Cache-Fresh to X-Cache-Cached
-
+- We need to also cache 404 responses, to handle missing robots.txt
+- Add columns: proto and status
 
 From scraper TODO:
 
@@ -330,4 +329,4 @@ Sundry
 - we should not be using client.Get, we should instead be building a Request
 - we should also copy across headers from incoming to outgoing Request
 
-
+- Cleaned up timestamp headers.

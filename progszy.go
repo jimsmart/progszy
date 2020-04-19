@@ -265,14 +265,16 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 			}
 		}
 
-		// Get metadata headers.
+		// Get metadata.
+		status := response.StatusCode
+		proto := response.Proto
 		lang := response.Header.Get("Content-Language")
 		mime := response.Header.Get("Content-Type")
 		etag := response.Header.Get("ETag")
 		lastMod := response.Header.Get("Last-Modified")
 
 		// Put asset in the cache.
-		cr, err := NewCacheRecord(uri, lang, mime, etag, lastMod, body, responseTime, rend)
+		cr, err := NewCacheRecord(uri, status, proto, lang, mime, etag, lastMod, body, responseTime, rend)
 		if err != nil {
 			log.Printf("Error creating CacheRecord: %v\n", err)
 			return httpError(r, fmt.Sprint(err), http.StatusInternalServerError)
