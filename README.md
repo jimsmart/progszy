@@ -135,14 +135,14 @@ GoDocs [https://godoc.org/github.com/jimsmart/progszy](https://godoc.org/github.
 
 Change folder to project root, and run:
 ```bash
-$ go $ godoc -http=:6060 -notes="BUG|TODO"
+$ godoc -http=:6060 -notes="BUG|TODO"
 ```
 
 Open a web browser and navigate to [http://127.0.0.1:6060/pkg/github.com/jimsmart/progszy/](http://127.0.0.1:6060/pkg/github.com/jimsmart/progszy/)
 
 ## Testing
 
-To run the tests execute `go test` inside the project folder.
+To run the tests execute `go test` inside the project root folder.
 
 For a full coverage report, try:
 
