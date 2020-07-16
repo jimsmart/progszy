@@ -71,8 +71,6 @@ Incoming `X-*` headers are not copied to outgoing requests.
 
 TODO 
 
-TODO Document any runtime dependencies - I believe the binary should be standalone?
-
 ### Build From Source
 
 First, ensure you have a working Go environment. See [Go 'Getting Started' documentation](https://golang.org/doc/install).
