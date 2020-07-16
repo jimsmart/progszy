@@ -75,7 +75,7 @@ TODO Document any runtime dependencies - I believe the binary should be standalo
 
 ### Build From Source
 
-First, ensure you have a working Go environment. TODO
+First, ensure you have a working Go environment. See [Go 'Getting Started' documentation](https://golang.org/doc/install).
 
 Then fetch the code:
 
