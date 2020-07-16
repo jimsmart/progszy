@@ -119,7 +119,7 @@ Listening on port 5595
 Run using custom configuration:
 
 ```bash
-$ ./progszy -port 8080 -cache /foo/bar/store -proxy http://10.10.0.1:9000
+$ ./progszy -port=8080 -cache=/foo/bar/store -proxy=http://10.10.0.1:9000
 Cache location /foo/bar/store
 Upstream proxy http://10.10.0.1:9000
 Listening on port 8080
@@ -130,6 +130,15 @@ Press <kbd>control</kbd>+<kbd>c</kbd> to halt execution — progszy will attempt
 ## Package Documentation
 
 GoDocs [https://godoc.org/github.com/jimsmart/progszy](https://godoc.org/github.com/jimsmart/progszy)
+
+### Local GoDocs 
+
+Change folder to project root, and run:
+```bash
+$ go $ godoc -http=:6060 -notes="BUG|TODO"
+```
+
+Open a web browser and navigate to [http://127.0.0.1:6060/pkg/github.com/jimsmart/progszy/](http://127.0.0.1:6060/pkg/github.com/jimsmart/progszy/)
 
 ## Testing
 
