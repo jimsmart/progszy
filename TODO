@@ -1,6 +1,11 @@
 TODO
 ====
 
+Consider using Docker for building, instead of Vagrant.
+See https://www.cloudreach.com/en/resources/blog/cts-build-golang-dockerfiles/
+
+
+
 Stats
 
 Best compression (20): 
