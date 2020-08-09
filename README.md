@@ -18,7 +18,7 @@ progszy should work with any HTTP client, but currently has only been tested wit
 
 Cached content is persisted in an [SQLite](https://www.sqlite.org) database, using [Zstandard](https://www.zstd.net) compression, enabling cached content to be retrieved [faster](https://www.sqlite.org/fasterthanfs.html) than regular file system reads, while also providing convenient packaging of cached content and saving storage space.
 
-A separate single-file database is created per domain, to cache its respective content (that is: content is 'binned' according to the root domain name). Database filenames also contain a creation timestamp. 
+A separate single-file database is created per domain, to cache its respective content (that is: content is 'binned' according to the root domain name). Database filenames also contain a creation timestamp.
 
 For example, request responses for `http://www.example.com/index.html` and `http://foo.bar.example.com/index.html` will both get cached in the same database, having a filename like `example.com-2020-03-20-1640.sqlite`.
 
@@ -38,11 +38,11 @@ Cache eviction/management is manual-only at present. Later we will add a REST AP
 
 The CLI version of progszy operates as a standalone HTTP(S) proxy server. By default it listens on port 5595, for which the client's proxy configuration URL would be `http://127.0.0.1:5595`. It should be noted that currently progszy binds only to IP 127.0.0.1, which is not suitable for access from a remote IP (without the use of an SSH tunnel).
 
-Incoming requests can be either vanilla HTTP, or can be HTTPS (using `CONNECT` protocol). 
+Incoming requests can be either vanilla HTTP, or can be HTTPS (using `CONNECT` protocol).
 
 When proxying HTTPS requests, the connection is intercepted by a man-in-the-middle (MITM) hijack, to allow both caching and the application of rules, and the resulting outbound stream is then re-encrypted using a private certificate, before being passed to the client. Note that clients wishing to proxy HTTPS requests using progszy will need specific configuration to prevent/ignore the resulting certificate mismatch errors caused by this process. See tests for an example of how this is done in Go.
 
-Outgoing HTTP requests utilise automatic retries with exponential backoff. Internal HTTP clients use a shared transport with pooling, and support upstream proxy chaining. Connections are not explicitly rate-limited. 
+Outgoing HTTP requests utilise automatic retries with exponential backoff. Internal HTTP clients use a shared transport with pooling, and support upstream proxy chaining. Connections are not explicitly rate-limited.
 
 Currently, progszy only supports HTTP `GET`, `HEAD` and `CONNECT` methods. Note that support for the `HEAD` method is not actually particularly useful in this context, and really only exists for spec compliance.
 
@@ -51,40 +51,34 @@ Currently, progszy only supports HTTP `GET`, `HEAD` and `CONNECT` methods. Note 
 progszy makes use of custom HTTP `X-*` headers to both control features and report status to the client.
 
 #### Request Headers
- 
- - `X-Cache-Reject` headers control early rejection/filtering of incoming content. Each header value is compiled into a regexp reject rule: if the content body matches any filter, the request response is not cached, and instead a `412 Precondition Failed` is returned to the client. See tests for example usage. Note that cache hits (requests for already cached content) are not currently affected by the use of this header.
- - `X-Cache-SSL: INSECURE` forces use of an internal HTTP client configured to skip SSL certificate validation during the upstream/outbound request. See tests for example usage.
- - `X-Cache-Flush: TRUE` forces the creation of a new cache database bin for the requested URL.
+
+- `X-Cache-Reject` headers control early rejection/filtering of incoming content. Each header value is compiled into a regexp reject rule: if the content body matches any filter, the request response is not cached, and instead a `412 Precondition Failed` is returned to the client. See tests for example usage. Note that cache hits (requests for already cached content) are not currently affected by the use of this header.
+- `X-Cache-SSL: INSECURE` forces use of an internal HTTP client configured to skip SSL certificate validation during the upstream/outbound request. See tests for example usage.
+- `X-Cache-Flush: TRUE` forces the creation of a new cache database bin for the requested URL.
 
 Incoming `X-*` headers are not copied to outgoing requests.
 
 #### Response Headers
 
- - `X-Cache` value will be `HIT`, `MISS` or `FLUSHED` accordingly. For cache hits and misses, the following headers are also present:
- - `X-Cache-Timestamp` indicates when the content was originally cached (RFC3339 format with nanosecond precision).
- - `Content-Length` value is set accordingly.
- - `Content-Type`, `Content-Language`, `ETag` and `Last-Modified` headers from incoming responses all have their value persisted to the cache, and restored appropriately on outgoing responses to the client.
+- `X-Cache` value will be `HIT`, `MISS` or `FLUSHED` accordingly. For cache hits and misses, the following headers are also present:
+- `X-Cache-Timestamp` indicates when the content was originally cached (RFC3339 format with nanosecond precision).
+- `Content-Length` value is set accordingly.
+- `Content-Type`, `Content-Language`, `ETag` and `Last-Modified` headers from incoming responses all have their value persisted to the cache, and restored appropriately on outgoing responses to the client.
 
 ## Installation
 
 ### Binary Executable
 
-TODO 
+TODO
 
 ### Build From Source
 
 First, ensure you have a working Go environment. See [Go 'Getting Started' documentation](https://golang.org/doc/install).
 
-Then fetch the code:
+Then fetch the code, build and install:
 
 ```bash
-go get github.com/jimsmart/progszy
-```
-
-And install it:
-
-```bash
-go install github.com/jimsmart/progszy/cmd/progszy
+go get github.com/jimsmart/progszy/cmd/progszy
 ```
 
 By default, the resulting binary executable will be `~/go/bin/progszy` (assuming no customisation has been made to `$GOPATH` or `$GOBIN`).
@@ -99,11 +93,11 @@ Get help / usage instructions:
 $ ./progszy --help
 Usage of ./progszy:
   -cache string
-    	Cache location (default "./cache")
+        Cache location (default "./cache")
   -port int
-    	Port number to listen on (default 5595)
+        Port number to listen on (default 5595)
   -proxy string
-    	Upstream HTTP(S) proxy URL (e.g. "http://10.0.0.1:8080")
+        Upstream HTTP(S) proxy URL (e.g. "http://10.0.0.1:8080")
 ```
 
 Run progszy with default settings:
@@ -129,11 +123,12 @@ Press <kbd>control</kbd>+<kbd>c</kbd> to halt execution — progszy will attempt
 
 GoDocs [https://godoc.org/github.com/jimsmart/progszy](https://godoc.org/github.com/jimsmart/progszy)
 
-### Local GoDocs 
+### Local GoDocs
 
 Change folder to project root, and run:
+
 ```bash
-$ godoc -http=:6060 -notes="BUG|TODO"
+godoc -http=:6060 -notes="BUG|TODO"
 ```
 
 Open a web browser and navigate to [http://127.0.0.1:6060/pkg/github.com/jimsmart/progszy/](http://127.0.0.1:6060/pkg/github.com/jimsmart/progszy/)
@@ -145,7 +140,7 @@ To run the tests execute `go test` inside the project root folder.
 For a full coverage report, try:
 
 ```bash
-$ go test -coverprofile=coverage.out && go tool cover -html=coverage.out
+go test -coverprofile=coverage.out && go tool cover -html=coverage.out
 ```
 
 ## Project Dependencies
@@ -153,9 +148,9 @@ $ go test -coverprofile=coverage.out && go tool cover -html=coverage.out
 Packages used by progszy (and their licensing):
 
 - SQLite driver [https://github.com/mattn/go-sqlite3](https://github.com/mattn/go-sqlite3) (MIT license)
-    - SQLite database [https://www.sqlite.org/](https://www.sqlite.org) (Public Domain, explicit)
+  - SQLite database [https://www.sqlite.org/](https://www.sqlite.org) (Public Domain, explicit)
 - Zstd wrapper [https://github.com/DataDog/zstd](https://github.com/DataDog/zstd) (Simplified BSD 3-Clause license)
-    - Zstandard [https://github.com/facebook/zstd](https://github.com/facebook/zstd) (BSD and GPL 2.0, dual licensed)
+  - Zstandard [https://github.com/facebook/zstd](https://github.com/facebook/zstd) (BSD and GPL 2.0, dual licensed)
 - goproxy [https://github.com/elazarl/goproxy](https://github.com/elazarl/goproxy) (BSD 3-Clause license)
 - retryablehttp [https://github.com/hashicorp/go-retryablehttp](https://github.com/hashicorp/go-retryablehttp) (MPL 2.0 license)
 - cleanhttp [https://github.com/hashicorp/go-cleanhttp](https://github.com/hashicorp/go-cleanhttp) (MPL 2.0 license)

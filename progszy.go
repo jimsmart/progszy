@@ -70,7 +70,7 @@ func proxyHandler(cache Cache, proxy *url.URL) func(*http.Request) *http.Respons
 		start := time.Now()
 		defer func() {
 			dur := time.Since(start)
-			log.Printf("total request duration %v", dur)
+			log.Printf("response handler duration %.3fms", float64(dur)/float64(time.Millisecond))
 		}()
 
 		// TODO Better error handling throughout.
@@ -227,7 +227,7 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 			log.Println(m)
 			return httpError(r, m, http.StatusPreconditionFailed)
 		}
-		log.Printf("upstream request/response duration %v", time.Now().Sub(rstart))
+		log.Printf("upstream request duration %.3fms", float64(time.Now().Sub(rstart))/float64(time.Millisecond))
 
 		// Check status code is good - we only accept 200 ok (the client handles redirects).
 		if response.StatusCode != 200 {
