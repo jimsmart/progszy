@@ -303,7 +303,10 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 }
 
 func applyCommonHeaders(resp *http.Response, cr *CacheRecord) {
-	resp.Header.Set("X-Cache-Timestamp", cr.Created.Format(time.RFC3339Nano))
+	// We force UTC for X-Cache-Timestamp here,
+	// so that old cache dbs (created before today, 11-Aug-2020)
+	// will still present times as UTC.
+	resp.Header.Set("X-Cache-Timestamp", cr.Created.UTC().Format(time.RFC3339Nano))
 	resp.Header.Set("Content-Length", strconv.Itoa(int(cr.ContentLength)))
 	if len(cr.ContentType) > 0 {
 		resp.Header.Set("Content-Type", cr.ContentType)

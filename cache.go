@@ -121,7 +121,7 @@ func NewCacheRecord(uri string, status int, proto, lang, mime, etag, lastMod str
 		ETag:            etag,
 		LastModified:    lastMod,
 		ResponseTime:    responseTime,
-		Created:         created,
+		Created:         created.UTC(),
 	}
 
 	err = r.SetBody(body)
