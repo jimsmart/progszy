@@ -70,7 +70,7 @@ func proxyHandler(cache Cache, proxy *url.URL) func(*http.Request) *http.Respons
 		start := time.Now()
 		defer func() {
 			dur := time.Since(start)
-			log.Printf("total response handler duration %.3fms", float64(dur)/float64(time.Millisecond))
+			log.Printf("total handler duration %.3fms", float64(dur)/float64(time.Millisecond))
 		}()
 
 		// TODO Better error handling throughout.
