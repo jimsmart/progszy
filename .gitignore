@@ -5,7 +5,6 @@ coverage.out
 *.code-workspace
 *.sqlite
 /cache/
-/test/
 /cmd/progszy/progszy
 /cmd/progszy/cache/
 /cmd/progszy/linux-amd64/
