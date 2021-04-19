@@ -1,4 +1,4 @@
-// Package progszy is a caching HTTP proxy service, using SQLite & Zstd.
+// Package progszy is a hard-caching HTTP(S) proxy server, using SQLite & Zstd.
 package progszy
 
 import (
