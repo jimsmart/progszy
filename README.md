@@ -162,11 +162,8 @@ Packages used by progszy (and their licensing):
 
 ## License
 
-progszy is copyright 2020 by Jim Smart and released under the [BSD 3-Clause License](LICENSE.md)
+progszy is copyright 2020–2021 by Jim Smart and released under the [BSD 3-Clause License](LICENSE.md).
 
 ## History
 
-TODO
-
-- v0.0.1: Initial release.
-- 2020-01-01: Work in progress.
+- v0.0.1 (2021-04-20) Work in progress. Initial test release.
