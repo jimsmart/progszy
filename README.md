@@ -75,7 +75,7 @@ TODO
 
 First, ensure you have a working Go environment. See [Go 'Getting Started' documentation](https://golang.org/doc/install).
 
-Then fetch the code, build and install:
+Then fetch the code, build and install the binary:
 
 ```bash
 go get github.com/jimsmart/progszy/cmd/progszy
