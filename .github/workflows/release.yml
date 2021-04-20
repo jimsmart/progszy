@@ -1,6 +1,6 @@
 name: release
 
-# on: 
+# on:
 #     release:
 #       types: [created]
 
@@ -8,20 +8,21 @@ on:
   workflow_dispatch:
 
 jobs:
-    releases-matrix:
-        name: Release Go binary
-        runs-on: ubuntu-latest
-        strategy:
-        matrix:
-            # build and publish in parallel: linux/386, linux/amd64, windows/386, windows/amd64, darwin/amd64 
-            goos: [linux, windows, darwin]
-            goarch: ["386", amd64]
-            exclude:  
-            - goarch: "386"
-                goos: darwin 
-                
-        steps:
-        - uses: actions/checkout@v2
+  releases-matrix:
+    name: Release Go binary
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # build and publish in parallel: linux/386, linux/amd64, windows/386, windows/amd64, darwin/amd64
+        goos: [linux, windows, darwin]
+        goarch: ["386", amd64]
+        exclude:
+        - goarch: "386"
+          goos: darwin
+
+    steps:
+      - uses: actions/checkout@v2
+
 #   - uses: wangyoucao577/go-release-action@v1.17
 #     with:
 #       github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -32,12 +33,12 @@ jobs:
 #       binary_name: "test-binary"
 #       extra_files: LICENSE README.md
 
-        # Install dependencies
-        - name: Install dependencies
+      # Install dependencies
+      - name: Install dependencies
         run: |
-            go version
-            go get -t -v ./...
+          go version
+          go get -t -v ./...
 
-        # Build project
-        - name: Build project
+      # Build project
+      - name: Build project
         run: go build ./...
