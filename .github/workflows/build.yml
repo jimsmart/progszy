@@ -48,14 +48,28 @@ jobs:
     #     file: ./coverage.txt
     #     # fail_ci_if_error: true # optional (default = false)
 
-    - name: Release latest
+    - name: Update latest release
       if: ${{ github.ref == 'refs/heads/main' }}
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "latest"
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        automatic_release_tag: latest
         prerelease: true
-        title: "Development Build"
+        title: Development Build
         # files: |
         #   LICENSE.txt
         #   *.jar
+
+    - name: Package latest executable
+      if: ${{ github.ref == 'refs/heads/main' }}
+      uses: wangyoucao577/go-release-action@v1.17
+      with:
+        release_tag: latest
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        goos: linux
+        goarch: amd64
+        # goos: ${{ matrix.goos }}
+        # goarch: ${{ matrix.goarch }}
+        project_path: "./cmd/progszy"
+        binary_name: progszy
+        extra_files: LICENSE.md README.md
