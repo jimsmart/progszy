@@ -64,8 +64,10 @@ jobs:
         # files: |
         #   LICENSE.txt
         #   *.jar
-      uses: AutoModality/action-clean@v1
-      uses: actions/checkout@v2
+
+    - uses: AutoModality/action-clean@v1
+    - uses: actions/checkout@v2
+    - name: Release latest Go artefacts
       uses: wangyoucao577/go-release-action@v1.17
       with:
         release_tag: latest
