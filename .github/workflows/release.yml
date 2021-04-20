@@ -1,11 +1,8 @@
 name: release
 
-# on:
-#     release:
-#       types: [created]
-
 on:
-  workflow_dispatch:
+  release:
+    types: [created]
 
 jobs:
   releases-matrix:
@@ -22,23 +19,22 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - uses: wangyoucao577/go-release-action@v1.17
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          goos: ${{ matrix.goos }}
+          goarch: ${{ matrix.goarch }}
+          # goversion: "https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz"
+          project_path: "./cmd/progszy"
+          binary_name: "progszy"
+          extra_files: LICENSE.d README.md
 
-#   - uses: wangyoucao577/go-release-action@v1.17
-#     with:
-#       github_token: ${{ secrets.GITHUB_TOKEN }}
-#       goos: ${{ matrix.goos }}
-#       goarch: ${{ matrix.goarch }}
-#       goversion: "https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz"
-#       project_path: "./cmd/test-binary"
-#       binary_name: "test-binary"
-#       extra_files: LICENSE README.md
+      # # Install dependencies
+      # - name: Install dependencies
+      #   run: |
+      #     go version
+      #     go get -t -v ./...
 
-      # Install dependencies
-      - name: Install dependencies
-        run: |
-          go version
-          go get -t -v ./...
-
-      # Build project
-      - name: Build project
-        run: go build ./...
+      # # Build project
+      # - name: Build project
+      #   run: go build ./...
