@@ -48,6 +48,11 @@ jobs:
     #     file: ./coverage.txt
     #     # fail_ci_if_error: true # optional (default = false)
 
+    # - name: Cleanup coverage.txt
+    #   if: ${{ github.ref == 'refs/heads/main' }}
+    #   run: rm coverage.txt
+
+
     - name: Update latest release
       if: ${{ github.ref == 'refs/heads/main' }}
       uses: "marvinpinto/action-automatic-releases@latest"
@@ -59,9 +64,8 @@ jobs:
         # files: |
         #   LICENSE.txt
         #   *.jar
-
-    - name: Package latest executable
-      if: ${{ github.ref == 'refs/heads/main' }}
+      uses: AutoModality/action-clean@v1
+      uses: actions/checkout@v2
       uses: wangyoucao577/go-release-action@v1.17
       with:
         release_tag: latest
