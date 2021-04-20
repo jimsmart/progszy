@@ -47,3 +47,15 @@ jobs:
     #   with:
     #     file: ./coverage.txt
     #     # fail_ci_if_error: true # optional (default = false)
+
+    - name: Release latest
+      if: ${{ github.ref == 'refs/heads/main' }}
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Development Build"
+        # files: |
+        #   LICENSE.txt
+        #   *.jar
