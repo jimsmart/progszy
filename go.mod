@@ -3,7 +3,7 @@ module github.com/jimsmart/progszy
 go 1.16
 
 require (
-	github.com/DataDog/zstd v1.4.8
+	github.com/DataDog/zstd v1.4.4
 	github.com/elazarl/goproxy v0.0.0-20200315184450-1f3cb6622dad // indirect
 	github.com/elazarl/goproxy/ext v0.0.0-20200315184450-1f3cb6622dad // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2
