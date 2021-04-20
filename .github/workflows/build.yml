@@ -64,18 +64,3 @@ jobs:
         # files: |
         #   LICENSE.txt
         #   *.jar
-
-    - uses: AutoModality/action-clean@v1
-    - uses: actions/checkout@v2
-    - name: Release latest Go artefacts
-      uses: wangyoucao577/go-release-action@v1.17
-      with:
-        release_tag: latest
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        goos: linux
-        goarch: amd64
-        # goos: ${{ matrix.goos }}
-        # goarch: ${{ matrix.goarch }}
-        project_path: "./cmd/progszy"
-        binary_name: progszy
-        extra_files: LICENSE.md README.md

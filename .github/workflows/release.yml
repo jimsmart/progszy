@@ -29,9 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: wangyoucao577/go-release-action@v1.17
-      # - uses: wangyoucao577/go-release-action@v1.12
         with:
-          # github_token: ${{ secrets.ACTION_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: ${{ matrix.goos }}
           goarch: ${{ matrix.goarch }}
@@ -39,12 +37,3 @@ jobs:
           binary_name: "progszy"
           extra_files: LICENSE.md README.md
 
-      # # Install dependencies
-      # - name: Install dependencies
-      #   run: |
-      #     go version
-      #     go get -t -v ./...
-
-      # # Build project
-      # - name: Build project
-      #   run: go build ./...
