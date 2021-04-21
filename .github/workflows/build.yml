@@ -49,39 +49,4 @@ jobs:
     #   with:
     #     file: ./coverage.txt
     #     # fail_ci_if_error: true # optional (default = false)
-
-    # - name: Update latest release
-    #   if: ${{ github.ref == 'refs/heads/main' }}
-    #   uses: "marvinpinto/action-automatic-releases@latest"
-    #   with:
-    #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-    #     automatic_release_tag: latest
-    #     prerelease: true
-    #     title: Development Build
-    #     # files: |
-    #     #   LICENSE.txt
-    #     #   *.jar
-
-    - name: Cleanup
-      if: ${{ github.ref == 'refs/heads/main' }}
-      uses: AutoModality/action-clean@v1
-
-    - name: Checkout repository
-      if: ${{ github.ref == 'refs/heads/main' }}
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-
-    - name: ls
-      if: ${{ github.ref == 'refs/heads/main' }}
-      run: ls -la ./cmd/progszy
-
-    - name: Run GoReleaser
-      if: ${{ github.ref == 'refs/heads/main' }}
-      uses: goreleaser/goreleaser-action@v2
-      with:
-        version: latest
-        args: release --rm-dist
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
