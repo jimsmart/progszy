@@ -9,3 +9,4 @@ coverage.out
 /cmd/progszy/cache/
 /cmd/progszy/linux-amd64/
 /cmd/progszy/windows-amd64/
+dist/
