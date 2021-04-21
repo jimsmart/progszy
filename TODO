@@ -5,6 +5,10 @@ Consider using Docker for building, instead of Vagrant.
 See https://www.cloudreach.com/en/resources/blog/cts-build-golang-dockerfiles/
 
 
+Switch zstd package, to https://github.com/valyala/gozstd
+Address code smell in progszy.go
+
+
 
 Stats
 
