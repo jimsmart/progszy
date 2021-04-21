@@ -149,7 +149,7 @@ Packages used by progszy (and their licensing):
 
 - SQLite driver [https://github.com/mattn/go-sqlite3](https://github.com/mattn/go-sqlite3) (MIT license)
   - SQLite database [https://www.sqlite.org/](https://www.sqlite.org) (Public Domain, explicit)
-- Zstd wrapper [https://github.com/DataDog/zstd](https://github.com/DataDog/zstd) (Simplified BSD 3-Clause license)
+- Zstd wrapper [https://github.com/valyala/gozstd](https://github.com/valyala/gozstd) (MIT license)
   - Zstandard [https://github.com/facebook/zstd](https://github.com/facebook/zstd) (BSD and GPL 2.0, dual licensed)
 - goproxy [https://github.com/elazarl/goproxy](https://github.com/elazarl/goproxy) (BSD 3-Clause license)
 - retryablehttp [https://github.com/hashicorp/go-retryablehttp](https://github.com/hashicorp/go-retryablehttp) (MPL 2.0 license)
