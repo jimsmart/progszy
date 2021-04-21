@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/DataDog/zstd"
+	"github.com/valyala/gozstd"
 	"github.com/weppos/publicsuffix-go/publicsuffix"
 )
 
@@ -66,8 +66,12 @@ type CacheRecord struct {
 	Created time.Time
 }
 
-func (r *CacheRecord) Body() io.ReadCloser {
-	return zstd.NewReader(bytes.NewReader(r.ZstdBody))
+func (r *CacheRecord) Body() (io.ReadCloser, error) {
+	body, err := gozstd.Decompress(nil, r.ZstdBody)
+	if err != nil {
+		return nil, err
+	}
+	return io.NopCloser(bytes.NewReader(body)), nil
 }
 
 const logCompressionStats = false
@@ -76,11 +80,8 @@ func (r *CacheRecord) SetBody(body []byte) error {
 	olen := int64(len(body))
 	start := time.Now()
 
-	// cbody, err := zstd.Compress(nil, body) // Default compression level.
-	cbody, err := zstd.CompressLevel(nil, body, zstd.BestCompression)
-	if err != nil {
-		return err
-	}
+	// cbody := gozstd.Compress(nil, body) // Default compression level.
+	cbody := gozstd.CompressLevel(nil, body, 20)
 
 	if logCompressionStats {
 		clen := int64(len(cbody))
