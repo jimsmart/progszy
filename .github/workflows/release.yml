@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - "v*.*.**"
-      # - "*"
 
 jobs:
   goreleaser:
@@ -20,18 +19,5 @@ jobs:
       with:
         version: latest
         args: release --rm-dist
-        # args: release --rm-dist --snapshot --skip-publish
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-      # - uses: actions/checkout@v2
-      # - uses: wangyoucao577/go-release-action@v1.17
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     goos: ${{ matrix.goos }}
-      #     goarch: ${{ matrix.goarch }}
-      #     project_path: "./cmd/progszy"
-      #     binary_name: "progszy"
-      #     extra_files: LICENSE.md README.md
-
