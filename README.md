@@ -69,7 +69,8 @@ Incoming `X-*` headers are not copied to outgoing requests.
 
 ### Binary Executable
 
-TODO
+Pre-built binary executables for Linux and Windows are available for download from
+the [latest release](https://github.com/jimsmart/progszy/releases/latest) page.
 
 ### Build From Source
 
