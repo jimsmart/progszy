@@ -6,7 +6,9 @@ before:
     # you may remove this if you don't need go generate
     # - go generate ./...
 builds:
-- main: ./cmd/progszy
+- id: windows64
+  binary: progszy
+  main: ./cmd/progszy
   ldflags:
     - -s -w
     # - -s -w -X github.com/gohugoio/hugo/common/hugo.buildDate={{.Date}} -X github.com/gohugoio/hugo/common/hugo.commitHash={{ .ShortCommit }}
@@ -22,7 +24,8 @@ builds:
     - windows
   goarch:
     - amd64
-# - binary: progszy
+# - id: darwin64
+#   binary: progszy
 #   main: ./cmd/progszy
 #   ldflags: -s -w
 #   # ldflags: -s -w -X github.com/gohugoio/hugo/common/hugo.buildDate={{.Date}} -X github.com/gohugoio/hugo/common/hugo.commitHash={{ .ShortCommit }}
@@ -37,7 +40,9 @@ builds:
 #     - darwin
 #   goarch:
 #     - amd64
-- main: ./cmd/progszy
+- id: linux64
+  binary: progszy
+  main: ./cmd/progszy
   ldflags: -s -w
   # ldflags: -s -w -X github.com/gohugoio/hugo/common/hugo.buildDate={{.Date}} -X github.com/gohugoio/hugo/common/hugo.commitHash={{ .ShortCommit }}
   env:
