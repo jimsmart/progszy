@@ -96,8 +96,6 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
-release:
-  draft: true
   
 # release:
   # Repo in which the release will be created.
