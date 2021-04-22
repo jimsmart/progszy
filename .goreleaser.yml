@@ -73,7 +73,10 @@ builds:
 #     - README.md
 #     - LICENSE.md
 archives:
-  - replacements:
+  - format_overrides:
+      - goos: windows
+        format: zip
+    replacements:
       amd64: 64bit
       386: 32bit
       arm: ARM
