@@ -22,19 +22,19 @@ jobs:
       with:
         go-version: '1.16'
 
+    # Get Go version into a string, replacing spaces with "-"
     - name: Get Go version
       id: get-go-version
       run: echo "::set-output name=version::$(go version | tr " " "-" )"
 
-    # - name: debug print
-    #   run: echo ${{ steps.get-go-version.outputs.version }}
-
-    - uses: actions/cache@v2
+    # Handle caching
+    - name: Handle cached dependencies
+      uses: actions/cache@v2
       with:
         path: ~/go/pkg/mod
-        key: ${{ steps.get-go-version.outputs.version }}-go-${{ hashFiles('**/go.sum') }}
+        key: ${{ steps.get-go-version.outputs.version }}-${{ hashFiles('**/go.sum') }}
         restore-keys: |
-          ${{ steps.get-go-version.outputs.version }}-go-
+          ${{ steps.get-go-version.outputs.version }}-
 
     # - uses: actions/cache@v2
     #   with:
