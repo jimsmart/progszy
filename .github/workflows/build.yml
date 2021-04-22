@@ -24,13 +24,17 @@ jobs:
 
     - name: Get Go version
       id: get-go-version
-      # run: echo "::set-output name=version::$(go version | tr "-" " " )"
-      run: |
-        go version | tr "-" " "
-        echo "::set-output name=version::$(go version | tr "-" " " )"
+      run: echo "::set-output name=version::$(go version | tr " " "-" )"
 
-    - name: debug print
-      run: echo ${{ steps.get-go-version.outputs.version }}
+    # - name: debug print
+    #   run: echo ${{ steps.get-go-version.outputs.version }}
+
+    - uses: actions/cache@v2
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ steps.get-go-version.outputs.version }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ steps.get-go-version.outputs.version }}-go-
 
     # - uses: actions/cache@v2
     #   with:
