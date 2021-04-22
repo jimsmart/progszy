@@ -6,23 +6,25 @@ before:
     # you may remove this if you don't need go generate
     # - go generate ./...
 builds:
+- binary: progszy
+  main: ./cmd/progszy
+  ldflags:
+    - -s -w
+    # - -s -w -X github.com/gohugoio/hugo/common/hugo.buildDate={{.Date}} -X github.com/gohugoio/hugo/common/hugo.commitHash={{ .ShortCommit }}
+    - "-extldflags '-static'"
+  env:
+    - CGO_ENABLED=1
+    - CC=x86_64-w64-mingw32-gcc
+    - CXX=x86_64-w64-mingw32-g++
+  flags:
+    - -tags
+    - extended
+  goos:
+    - windows
+  goarch:
+    - amd64
 # - binary: progszy
-#   ldflags:
-#     - -s -w
-#     # - -s -w -X github.com/gohugoio/hugo/common/hugo.buildDate={{.Date}} -X github.com/gohugoio/hugo/common/hugo.commitHash={{ .ShortCommit }}
-#     - "-extldflags '-static'"
-#   env:
-#     - CGO_ENABLED=1
-#     - CC=x86_64-w64-mingw32-gcc
-#     - CXX=x86_64-w64-mingw32-g++
-#   flags:
-#     - -tags
-#     - extended
-#   goos:
-#     - windows
-#   goarch:
-#     - amd64
-# - binary: progszy
+#   main: ./cmd/progszy
 #   ldflags: -s -w
 #   # ldflags: -s -w -X github.com/gohugoio/hugo/common/hugo.buildDate={{.Date}} -X github.com/gohugoio/hugo/common/hugo.commitHash={{ .ShortCommit }}
 #   env:
