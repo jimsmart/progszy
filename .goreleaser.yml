@@ -51,6 +51,23 @@ builds:
     - linux
   goarch:
     - amd64
+- id: linuxarm64
+  binary: progszy
+  main: ./cmd/progszy
+  ldflags:
+    - -s -w
+    - "-extldflags '-static'"
+  env:
+    - CGO_ENABLED=1
+    - CC=arm-linux-gnueabi-gcc
+    - CXX=arm-linux-gnueabi-gcc++
+  flags:
+    - -tags
+    - extended
+  goos:
+    - linux
+  goarch:
+    - arm64
 # archives:
 #   format: tar.gz
 #   format_overrides:
