@@ -61,9 +61,6 @@ builds:
     - CGO_ENABLED=1
     - CC=aarch64-linux-gnu-gcc
     - CXX=aarch64-linux-gnu-gcc++
-    # These are for ARMv5/ARMv6/ARMv7 - See https://github.com/golang/go/wiki/GoArm
-    # - CC=arm-linux-gnueabi-gcc
-    # - CXX=arm-linux-gnueabi-gcc++
   flags:
     - -tags
     - extended
