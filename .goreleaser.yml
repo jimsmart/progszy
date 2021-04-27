@@ -86,6 +86,8 @@ builds:
     - extended
   goos:
     - linux
+  goarch:
+    - arm
   goarm:
     - 5
     - 6
