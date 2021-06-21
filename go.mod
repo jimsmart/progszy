@@ -1,6 +1,6 @@
 module github.com/jimsmart/progszy
 
-go 1.16
+go 1.15
 
 require (
 	github.com/elazarl/goproxy v0.0.0-20200315184450-1f3cb6622dad // indirect
