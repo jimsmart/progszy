@@ -167,7 +167,8 @@ progszy is copyright 2020–2021 by Jim Smart and released under the [BSD 3-Clau
 
 ## History
 
-- v0.0.10 (2022-01-27) Test fixup. Updated dependencies.
+- v0.0.11 (2022-01-27) Test fixup. Updated dependencies.
+- v0.0.10 (2021-06-21) Require Go 1.15 instead of 1.16.
 - v0.0.9 (2021-06-21) Updated dependencies.
 - v0.0.3 (2021-04-21) Automated releases.
 - v0.0.1 (2021-04-20) Work in progress. Initial test release.
