@@ -29,7 +29,7 @@ var _ = Describe("Cache", func() {
 	Describe("Cache helpers", func() {
 
 		It("should normalise url query strings", func() {
-			u, _ := url.Parse("http://10.0.0.1/abc?z=1&y=2&y=3;x")
+			u, _ := url.Parse("http://10.0.0.1/abc?z=1&y=2&y=3&x")
 			err := progszy.NormaliseQuery(u)
 			Expect(err).To(BeNil())
 			Expect(u.String()).To(Equal("http://10.0.0.1/abc?x=&y=2&y=3&z=1"))

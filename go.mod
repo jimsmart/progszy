@@ -10,8 +10,8 @@ require (
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/onsi/ginkgo v1.12.0
 	github.com/onsi/gomega v1.9.0
-	github.com/valyala/gozstd v1.11.0
+	github.com/valyala/gozstd v1.15.1
 	github.com/weppos/publicsuffix-go v0.15.0
-	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
+	golang.org/x/net v0.0.0-20220127074510-2fabfed7e28f // indirect
 	gopkg.in/elazarl/goproxy.v1 v1.0.0-20180725130230-947c36da3153
 )
