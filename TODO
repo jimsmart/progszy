@@ -1,12 +1,11 @@
 TODO
 ====
 
-Consider using Docker for building, instead of Vagrant.
-See https://www.cloudreach.com/en/resources/blog/cts-build-golang-dockerfiles/
 
+Next:
 
-Switch zstd package, to https://github.com/valyala/gozstd
-Address code smell in progszy.go
+- Selectable binning strategy? CLI param, binby(binkey?) = fqdn|root (default=root)
+
 
 
 
@@ -38,12 +37,11 @@ From scraper TODO:
 Progszy
 =======
 
-- Selectable binning strategy? CLI param, binby(binkey?) = fqdn|root (default=root)
-
 - Check cache folder location exists on startup, otherwise fail to start.
 
 - Would be nice to format durations better.
  - ns µs ms s m h d
+ - Note that funky unicode characters don't show correctly in Supervisor logs.
 
 if dur < time.Microsecond {
   // Nanosecond resolution
@@ -339,3 +337,14 @@ Sundry
 - we should also copy across headers from incoming to outgoing Request
 
 - Cleaned up timestamp headers.
+
+
+Consider using Docker for building, instead of Vagrant.
+See https://www.cloudreach.com/en/resources/blog/cts-build-golang-dockerfiles/
+- Build is now performed using GitHub Actions.
+
+
+Switch zstd package, to https://github.com/valyala/gozstd
+Address code smell in progszy.go
+- Done.
+

@@ -144,6 +144,24 @@ For a full coverage report, try:
 go test -coverprofile=coverage.out && go tool cover -html=coverage.out
 ```
 
+## GitHub Build Automation
+
+This repo uses the following GitHub Action workflows:
+
+### Github Actions
+
+Documentation [https://docs.github.com/en/actions](https://docs.github.com/en/actions)
+
+- `.github/workflows/build.yml` - Automatically runs on all push actions to this repo. Builds project, runs go vet & golint, runs tests, reports coverage (coverage reporting is currently disabled, due to this repo currently being private).
+- `.github/workflows/dummy-release.yml` - Manually run pre-release workflow. Runs the same actions as 'release' action, below, but skips publishing. Use this as a dry-run, before pushing a version-tagged commit to the repo and triggering a release publication.
+- `.github/workflows/release.yml` - Automatically runs on all push actions to this repo that specify a tag of format `"v*.*.**"`. Installs cross-compilers, runs GoReleaser to  build all target binaries, package as tars/zips, and create a draft release using the resulting artifacts. Publication of this release must then be manually confirmed on GitHub (by choosing to edit the release, and pressing the green 'Publish release' button).
+
+### GoReleaser
+
+Website [https://goreleaser.com/](https://goreleaser.com/)
+
+`.goreleaser.yml` contains GoReleaser configuration for release builds, handling cross-compilation, packaging and creation of a (draft) release on GitHub. It is invoked by the above mentioned GitHub Actions, 'release' and 'dummy release'.
+
 ## Project Dependencies
 
 Packages used by progszy (and their licensing):
@@ -163,7 +181,7 @@ Packages used by progszy (and their licensing):
 
 ## License
 
-progszy is copyright 2020–2021 by Jim Smart and released under the [BSD 3-Clause License](LICENSE.md).
+progszy is copyright 2020–2022 by Jim Smart and released under the [BSD 3-Clause License](LICENSE.md).
 
 ## History
 
