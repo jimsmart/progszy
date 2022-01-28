@@ -164,11 +164,11 @@ Website [https://goreleaser.com/](https://goreleaser.com/)
 
 ## Release Publication
 
-### Dry Run of Release Build Workflow
+### 1. Dry Run of Release Build Workflow
 
 First, go to this repo's [Actions page](https://github.com/jimsmart/progszy/actions), and manually run the 'dummy release' action workflow, addressing any issues that may arise.
 
-### Tag Version & Push
+### 2. Tag Version & Push
 
 Once the 'dummy release' action workflow completes ok, then make a version-tagged push to the repo, using a command similar to:
 
@@ -180,7 +180,7 @@ git tag v0.0.1 && git push origin v0.0.1
 
 On completion of the push, the 'release' action workflow will automatically begin execution. Wait for it to complete.
 
-### Confirm Publication
+### 3. Confirm Publication
 
 GoRelease is configured here to only publish draft releases.
 
