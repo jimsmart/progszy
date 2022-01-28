@@ -156,7 +156,7 @@ Documentation [https://docs.github.com/en/actions](https://docs.github.com/en/ac
 - `.github/workflows/dummy-release.yml` - Manually run pre-release workflow. Runs the same actions as 'release' action, below, but skips publishing. Use this as a dry-run, before pushing a version-tagged commit to the repo and triggering a release publication.
 - `.github/workflows/release.yml` - Automatically runs on all push actions to this repo that specify a tag of format `"v*.*.**"`. Installs cross-compilers, runs GoReleaser to  build all target binaries, package as tars/zips, and create a draft release using the resulting artifacts. Publication of this release must then be manually confirmed on GitHub (by choosing to edit the release, and pressing the green 'Publish release' button).
 
-#### GoReleaser
+### GoReleaser
 
 Website [https://goreleaser.com/](https://goreleaser.com/)
 
