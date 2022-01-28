@@ -164,13 +164,17 @@ Website [https://goreleaser.com/](https://goreleaser.com/)
 
 ## Release Publication
 
-First, go to this repo's [Actions page](https://github.com/jimsmart/progszy/actions), and manually run the 'dummy release' action workflow, addressing any issues that may arise. Once the 'dummy release' action workflow completes ok, then make a version-tagged push to the repo, using a command similar to (ammending the version number as necessary):
+First, go to this repo's [Actions page](https://github.com/jimsmart/progszy/actions), and manually run the 'dummy release' action workflow, addressing any issues that may arise. Once the 'dummy release' action workflow completes ok, then make a version-tagged push to the repo, using a command similar to:
 
 ```bash
 git tag v0.0.1 && git push origin v0.0.1
 ```
 
-On completion of the push, the 'release' action workflow will automatically begin execution. On successful completion of workflow execution, go to the repo's [releases page](https://github.com/jimsmart/progszy/releases), find the new draft release, edit it (by clicking the pencil icon), check all is well, then click the green 'Publish release' button.
+(Amending the version number accordingly)
+
+On completion of the push, the 'release' action workflow will automatically begin execution.
+
+On successful completion of workflow execution, go to the repo's [releases page](https://github.com/jimsmart/progszy/releases), find the new draft release, edit it (by clicking the pencil icon), check all is well, then click the green 'Publish release' button.
 
 ## Project Dependencies
 
