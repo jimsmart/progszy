@@ -160,7 +160,17 @@ Documentation [https://docs.github.com/en/actions](https://docs.github.com/en/ac
 
 Website [https://goreleaser.com/](https://goreleaser.com/)
 
-`.goreleaser.yml` contains GoReleaser configuration for release builds, handling cross-compilation, packaging and creation of a (draft) release on GitHub. It is invoked by the above mentioned GitHub Actions, 'release' and 'dummy release'.
+`.goreleaser.yml` contains GoReleaser configuration for release builds, handling cross-compilation, packaging and creation of a (draft) release on GitHub. It is invoked by the above mentioned GitHub Actions, 'release' and 'dummy-release'.
+
+## Release Publication
+
+First, manually run the 'dummy-release' action workflow, and address any issues. Once that action workflow completes ok, then make a version-tagged push to the repo, using a command similar to:
+
+```bash
+git tag v0.0.1 && git push origin v0.0.1
+```
+
+Once the 'release' action workflow successfully completes execution, go to the repo's releases page, find the new draft release, edit it (by clicking the pencil icon), check all is well, then click the green 'Publish release' button.
 
 ## Project Dependencies
 
