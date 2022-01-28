@@ -153,8 +153,8 @@ This repo uses the following GitHub Action workflow automations:
 Documentation [https://docs.github.com/en/actions](https://docs.github.com/en/actions)
 
 - `.github/workflows/build.yml` - Automatically runs on all push actions to this repo. Builds project, runs go vet & golint, runs tests, reports coverage (coverage reporting is currently disabled, due to this repo currently being private).
-- `.github/workflows/dummy-release.yml` - Manually run pre-release workflow. Runs the same actions as the 'release' action (below), but skips publishing. Use this as a dry-run, before pushing a version-tagged commit to the repo to trigger publication of a release.
-- `.github/workflows/release.yml` - Automatically runs on all push actions to this repo that specify a tag of format `"v*.*.**"`. Installs cross-compilers, runs GoReleaser to  build all target binaries, package tars/zips, and create a draft release using the resulting artifacts. Publication of this release must then be manually confirmed on GitHub (by choosing to edit the release, and pressing the green 'Publish release' button).
+- `.github/workflows/dummy-release.yml` - Manually run pre-release workflow. Runs the same actions as the 'release' action (below), but skips publishing. Use this as a dry run, before pushing a version-tagged commit to the repo to trigger publication of a release.
+- `.github/workflows/release.yml` - Automatically runs on all push actions to this repo that specify a tag of format `"v*.*.**"`. Installs cross-compilers, runs GoReleaser to  build all target binaries, package tars/zips, and create a draft release using the resulting assets. Publication of this release must then be manually confirmed on GitHub (by choosing to edit the release, and pressing the green 'Publish release' button).
 
 ### GoReleaser
 
@@ -164,7 +164,11 @@ Website [https://goreleaser.com/](https://goreleaser.com/)
 
 ## Release Publication
 
-First, go to this repo's [Actions page](https://github.com/jimsmart/progszy/actions), and manually run the 'dummy release' action workflow, addressing any issues that may arise. 
+### Dry Run of Release Build Workflow
+
+First, go to this repo's [Actions page](https://github.com/jimsmart/progszy/actions), and manually run the 'dummy release' action workflow, addressing any issues that may arise.
+
+### Tag Version & Push
 
 Once the 'dummy release' action workflow completes ok, then make a version-tagged push to the repo, using a command similar to:
 
@@ -174,9 +178,13 @@ git tag v0.0.1 && git push origin v0.0.1
 
 (Amending the version number accordingly)
 
-On completion of the push, the 'release' action workflow will automatically begin execution.
+On completion of the push, the 'release' action workflow will automatically begin execution. Wait for it to complete.
 
-On successful completion of workflow execution, go to the repo's [releases page](https://github.com/jimsmart/progszy/releases), find the new draft release, edit it (by clicking the pencil icon), check all is well, then click the green 'Publish release' button.
+### Confirm Publication
+
+GoRelease is configured here to only publish draft releases.
+
+On successful completion of the 'release' workflow execution, go to the repo's [releases page](https://github.com/jimsmart/progszy/releases), find the new draft release, edit it (by clicking the pencil icon), check all is well, then click the green 'Publish release' button.
 
 ## Project Dependencies
 
