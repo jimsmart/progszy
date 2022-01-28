@@ -164,7 +164,9 @@ Website [https://goreleaser.com/](https://goreleaser.com/)
 
 ## Release Publication
 
-First, go to this repo's [Actions page](https://github.com/jimsmart/progszy/actions), and manually run the 'dummy release' action workflow, addressing any issues that may arise. Once the 'dummy release' action workflow completes ok, then make a version-tagged push to the repo, using a command similar to:
+First, go to this repo's [Actions page](https://github.com/jimsmart/progszy/actions), and manually run the 'dummy release' action workflow, addressing any issues that may arise. 
+
+Once the 'dummy release' action workflow completes ok, then make a version-tagged push to the repo, using a command similar to:
 
 ```bash
 git tag v0.0.1 && git push origin v0.0.1
