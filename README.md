@@ -146,7 +146,7 @@ go test -coverprofile=coverage.out && go tool cover -html=coverage.out
 
 ## GitHub Build Automation
 
-This repo uses the following GitHub Action workflows:
+This repo uses the following GitHub Action workflow automations:
 
 ### Github Actions
 
@@ -156,7 +156,7 @@ Documentation [https://docs.github.com/en/actions](https://docs.github.com/en/ac
 - `.github/workflows/dummy-release.yml` - Manually run pre-release workflow. Runs the same actions as 'release' action, below, but skips publishing. Use this as a dry-run, before pushing a version-tagged commit to the repo and triggering a release publication.
 - `.github/workflows/release.yml` - Automatically runs on all push actions to this repo that specify a tag of format `"v*.*.**"`. Installs cross-compilers, runs GoReleaser to  build all target binaries, package as tars/zips, and create a draft release using the resulting artifacts. Publication of this release must then be manually confirmed on GitHub (by choosing to edit the release, and pressing the green 'Publish release' button).
 
-### GoReleaser
+#### GoReleaser
 
 Website [https://goreleaser.com/](https://goreleaser.com/)
 
@@ -164,13 +164,13 @@ Website [https://goreleaser.com/](https://goreleaser.com/)
 
 ## Release Publication
 
-First, manually run the 'dummy release' action workflow, and address any issues. Once that action workflow completes ok, then make a version-tagged push to the repo, using a command similar to:
+First, go to this repo's [Actions page](https://github.com/jimsmart/progszy/actions), and manually run the 'dummy release' action workflow, addressing any issues that may arise. Once the 'dummy release' action workflow completes ok, then make a version-tagged push to the repo, using a command similar to (ammending the version number as necessary):
 
 ```bash
 git tag v0.0.1 && git push origin v0.0.1
 ```
 
-The 'release' action workflow will automatically begin execution. On successful completion of workflow execution, go to the repo's [releases page](https://github.com/jimsmart/progszy/releases), find the new draft release, edit it (by clicking the pencil icon), check all is well, then click the green 'Publish release' button.
+On completion of the push, the 'release' action workflow will automatically begin execution. On successful completion of workflow execution, go to the repo's [releases page](https://github.com/jimsmart/progszy/releases), find the new draft release, edit it (by clicking the pencil icon), check all is well, then click the green 'Publish release' button.
 
 ## Project Dependencies
 
