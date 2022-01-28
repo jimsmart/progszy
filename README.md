@@ -8,6 +8,11 @@
 
 progszy is a hard-caching HTTP(S) proxy server (with programmatic cache management), designed for use as part of a data-scraping pipeline.
 
+- Brings stable reproducability to web data-scraping pipelines.
+- Improves web scraper development workflow, via fast controlled caching of HTTP responses.
+- Improves scraper performance when resuming partial scrapes.
+- Improves debugging of failed live scrapes, download the cached data for consistent reproducible local re-runs.
+
 It is both a standalone executable CLI program, and a Go package.
 
 It is **not** suitable for use as a regular HTTP(S) caching proxy for humans surfing with web browsers.
