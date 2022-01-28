@@ -170,7 +170,7 @@ First, manually run the 'dummy-release' action workflow, and address any issues.
 git tag v0.0.1 && git push origin v0.0.1
 ```
 
-Once the 'release' action workflow successfully completes execution, go to the repo's [releases page](https://github.com/jimsmart/progszy/releases), find the new draft release, edit it (by clicking the pencil icon), check all is well, then click the green 'Publish release' button.
+The 'release' action workflow will automatically begin execution. On successful completion of workflow execution, go to the repo's [releases page](https://github.com/jimsmart/progszy/releases), find the new draft release, edit it (by clicking the pencil icon), check all is well, then click the green 'Publish release' button.
 
 ## Project Dependencies
 
