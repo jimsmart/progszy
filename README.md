@@ -36,7 +36,7 @@ progszy *intentionally* makes **no** use of HTTP headers relating to cached cont
 
 The body content and appropriate headers for all `200 Ok` responses are hard-cached — unless the body matches a given filter (see `X-Cache-Reject`, below).
 
-Content exceeding an arbitrary maximum body size of 128mb is not cached nor proxied, and instead returns a `412 Precondition Failed` response to the client. We may review this decision/behaviour at a later date.
+Content exceeding an arbitrary maximum body size of 512mb is not cached nor proxied, and instead returns a `507 Insufficient Storage` response to the client. We may review this decision/behaviour at a later date.
 
 Cache eviction/management is manual-only at present. Later we will add a REST API for programmatic cache management.
 
