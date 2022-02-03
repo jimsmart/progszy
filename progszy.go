@@ -25,8 +25,9 @@ import (
 // The spec says it shouldn't be more than 50mb, but it's difficult to argue with the reality of the situation.
 
 // maxBodySize is the maximum number of bytes to read from the response body.
-const maxBodySize = 128 * 1024 * 1024 // 128mb
+const maxBodySize = 512 * 1024 * 1024 // 512mb
 
+// const maxBodySize = 128 * 1024 * 1024 // 128mb
 // const maxBodySize = 16 * 1024 * 1024 // 16mb
 // const maxBodySize = 1 * 1024 * 1024 // 1mb
 
@@ -222,7 +223,7 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 			log.Println(m)
 			return httpError(r, m, http.StatusPreconditionFailed)
 		}
-		log.Printf("upstream request duration %.3fms", float64(time.Now().Sub(rstart))/float64(time.Millisecond))
+		log.Printf("upstream request duration %.3fms", float64(time.Since(rstart))/float64(time.Millisecond))
 
 		// Check status code is good - we only accept 200 ok (the client handles redirects).
 		if response.StatusCode != 200 {
