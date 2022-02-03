@@ -221,7 +221,7 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 			max := byteCountDecimal(maxBodySize)
 			m := fmt.Sprintf("Body exceeds maximum size (%s)", max)
 			log.Println(m)
-			return httpError(r, m, http.StatusPreconditionFailed)
+			return httpError(r, m, http.StatusInsufficientStorage)
 		}
 		log.Printf("upstream request duration %.3fms", float64(time.Since(rstart))/float64(time.Millisecond))
 
