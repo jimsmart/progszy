@@ -126,11 +126,13 @@ Listening on port 8080
 
 Press <kbd>control</kbd>+<kbd>c</kbd> to halt execution — progszy will attempt to cleanly complete any in-flight connections before exiting.
 
-## Package Documentation
+## Developer Information
+
+### Package Documentation
 
 GoDocs [https://godoc.org/github.com/jimsmart/progszy](https://godoc.org/github.com/jimsmart/progszy)
 
-### Local GoDocs
+#### Local GoDocs
 
 Change folder to project root, and run:
 
@@ -140,7 +142,7 @@ godoc -http=:6060 -notes="BUG|TODO"
 
 Open a web browser and navigate to [http://127.0.0.1:6060/pkg/github.com/jimsmart/progszy/](http://127.0.0.1:6060/pkg/github.com/jimsmart/progszy/)
 
-## Testing
+### Testing
 
 To run the tests execute `go test` inside the project root folder.
 
@@ -150,11 +152,11 @@ For a full coverage report, try:
 go test -coverprofile=coverage.out && go tool cover -html=coverage.out
 ```
 
-## GitHub Build Automation
+### GitHub Build Automation
 
 This repo uses the following GitHub Action workflow automations:
 
-### Github Actions
+#### Github Actions
 
 Documentation [https://docs.github.com/en/actions](https://docs.github.com/en/actions)
 
@@ -162,19 +164,19 @@ Documentation [https://docs.github.com/en/actions](https://docs.github.com/en/ac
 - `.github/workflows/dummy-release.yml` - Manually run pre-release workflow. Runs the same actions as the 'release' action (below), but skips publishing. Use this as a dry run, before pushing a version-tagged commit to the repo to trigger publication of a release.
 - `.github/workflows/release.yml` - Automatically runs on all push actions to this repo that specify a tag of format `"v*.*.**"`. Installs cross-compilers, runs GoReleaser to  build all target binaries, package tars/zips, and create a draft release using the resulting assets. Publication of this release must then be manually confirmed on GitHub (by choosing to edit the release, and pressing the green 'Publish release' button).
 
-### GoReleaser
+#### GoReleaser
 
 Website [https://goreleaser.com/](https://goreleaser.com/)
 
 `.goreleaser.yml` contains GoReleaser configuration for release builds, handling cross-compilation, packaging and creation of a (draft) release on GitHub. It is invoked by the above mentioned GitHub Actions, 'release' and 'dummy release'.
 
-## Release Publication
+### Release Publication
 
-### 1. Dry Run of Release Build Workflow
+#### 1. Dry Run of Release Build Workflow
 
 First, go to this repo's [Actions page](https://github.com/jimsmart/progszy/actions), and manually run the 'dummy release' action workflow, addressing any issues that may arise.
 
-### 2. Tag Version & Push
+#### 2. Tag Version & Push
 
 Once the 'dummy release' action workflow completes ok, then make a version-tagged push to the repo, using a command similar to:
 
@@ -186,13 +188,13 @@ git tag v0.0.1 && git push origin v0.0.1
 
 On completion of the push, the 'release' action workflow will automatically begin execution. Wait for it to complete.
 
-### 3. Confirm Publication
+#### 3. Confirm Publication
 
 GoRelease is configured here to only publish draft releases.
 
 On successful completion of the 'release' workflow execution, go to the repo's [releases page](https://github.com/jimsmart/progszy/releases), find the new draft release, edit it (by clicking the pencil icon), check all is well, then click the green 'Publish release' button.
 
-## Project Dependencies
+### Project Dependencies
 
 Packages used by progszy (and their licensing):
 
@@ -215,6 +217,9 @@ progszy is copyright 2020–2022 by Jim Smart and released under the [BSD 3-Clau
 
 ## History
 
+- v0.0.15 (2022-02-03) Updated dependencies.
+- v0.0.14 (2022-02-03) Improved documentation.
+- v0.0.12 (2022-02-03) Increase maxBodySize to 512mb. Cleanups.
 - v0.0.11 (2022-01-27) Test fixup. Updated dependencies.
 - v0.0.10 (2021-06-21) Require Go 1.15 instead of 1.16.
 - v0.0.9 (2021-06-21) Updated dependencies.
