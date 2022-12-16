@@ -4,6 +4,14 @@ TODO
 
 Next:
 
+
+go: warning: github.com/mattn/go-sqlite3@v2.0.3+incompatible: retracted by module author: Accidental; no major changes or features.
+29
+go: to switch to the latest unretracted version, run:
+30
+	go get github.com/mattn/go-sqlite3@latest
+  
+
 - Selectable binning strategy? CLI param, binby(binkey?) = fqdn|root (default=root)
 
 
