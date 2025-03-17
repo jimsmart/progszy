@@ -212,6 +212,7 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 		lr := io.LimitedReader{R: response.Body, N: maxBodySize + 1}
 		body, err := ioutil.ReadAll(&lr)
 		if err != nil {
+			// TODO(js) This has failed before. Can we retry somehow?
 			log.Printf("ioutil.ReadAll error: %v\n", err)
 			return httpError(r, fmt.Sprint(err), http.StatusInternalServerError)
 		}
