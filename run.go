@@ -32,7 +32,7 @@ func Run(addr, cachePath string, proxy *url.URL) error {
 	}
 	if !stat.IsDir() {
 		logger.Printf("Cache location must be a folder %s\n", cachePath)
-		return fmt.Errorf("Location not a folder %s", cachePath)
+		return fmt.Errorf("location not a folder %s", cachePath)
 	}
 	logger.Printf("Cache location %s\n", cachePath)
 
