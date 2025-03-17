@@ -6,7 +6,6 @@ import (
 	"crypto/tls"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -95,7 +94,7 @@ func proxyHandler(cache Cache, proxy *url.URL) func(*http.Request) *http.Respons
 		}
 
 		// Consume the request body.
-		io.Copy(ioutil.Discard, r.Body)
+		io.Copy(io.Discard, r.Body)
 		r.Body.Close()
 
 		uri := r.RequestURI
@@ -210,7 +209,7 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 
 		// Read the response body, limiting the max size.
 		lr := io.LimitedReader{R: response.Body, N: maxBodySize + 1}
-		body, err := ioutil.ReadAll(&lr)
+		body, err := io.ReadAll(&lr)
 		if err != nil {
 			// TODO(js) This has failed before. Can we retry somehow?
 			log.Printf("ioutil.ReadAll error: %v\n", err)
@@ -218,7 +217,7 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 		}
 		if lr.N == 0 {
 			// Exceeded max body size.
-			io.Copy(ioutil.Discard, response.Body)
+			io.Copy(io.Discard, response.Body)
 			max := byteCountDecimal(maxBodySize)
 			m := fmt.Sprintf("Body exceeds maximum size (%s)", max)
 			log.Println(m)
@@ -287,7 +286,7 @@ func makeCacheMissHandler(proxy *url.URL) func(r *http.Request, uri string, cach
 		applyCommonHeaders(resp, cr)
 		switch r.Method {
 		case "GET":
-			resp.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+			resp.Body = io.NopCloser(bytes.NewBuffer(body))
 		case "HEAD":
 			// No action.
 		}
@@ -327,18 +326,18 @@ func newResponse(r *http.Request /*contentType string,*/, status int) *http.Resp
 	// resp.ContentLength = int64(buf.Len())
 	// resp.Body = ioutil.NopCloser(buf)
 	// resp.Body = ioutil.NopCloser(body)
-	resp.Body = ioutil.NopCloser(&bytes.Buffer{})
+	resp.Body = io.NopCloser(&bytes.Buffer{})
 	return resp
 }
 
 func newResponseWithBody(r *http.Request /*contentType string,*/, status int, body io.Reader) *http.Response {
 	resp := newResponse(r, status)
-	resp.Body = ioutil.NopCloser(body)
+	resp.Body = io.NopCloser(body)
 	return resp
 }
 
 func httpError(r *http.Request, message string, status int) *http.Response {
-	body := ioutil.NopCloser(bytes.NewBufferString(message))
+	body := io.NopCloser(bytes.NewBufferString(message))
 	return newResponseWithBody(r, status, body)
 }
 

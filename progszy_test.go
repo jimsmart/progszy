@@ -2,7 +2,7 @@ package progszy_test
 
 import (
 	"crypto/tls"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -69,7 +69,7 @@ var _ = Describe("Progszy", func() {
 
 		Expect(resp.StatusCode).To(Equal(http.StatusOK))
 
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		Expect(err).To(BeNil())
 		Expect(body).To(ContainSubstring("Books"))
 
@@ -97,7 +97,7 @@ var _ = Describe("Progszy", func() {
 
 		Expect(resp.StatusCode).To(Equal(http.StatusOK))
 
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		Expect(err).To(BeNil())
 		Expect(body).To(ContainSubstring("Computers"))
 
@@ -127,7 +127,7 @@ var _ = Describe("Progszy", func() {
 
 		Expect(resp.StatusCode).To(Equal(http.StatusOK))
 
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		Expect(err).To(BeNil())
 		Expect(body).To(ContainSubstring("Books"))
 
@@ -152,7 +152,7 @@ var _ = Describe("Progszy", func() {
 
 		Expect(resp1.StatusCode).To(Equal(http.StatusOK))
 
-		body1, err := ioutil.ReadAll(resp1.Body)
+		body1, err := io.ReadAll(resp1.Body)
 		Expect(err).To(BeNil())
 		Expect(body1).To(ContainSubstring("Books"))
 
@@ -169,7 +169,7 @@ var _ = Describe("Progszy", func() {
 
 		Expect(resp2.StatusCode).To(Equal(http.StatusOK))
 
-		body2, err := ioutil.ReadAll(resp2.Body)
+		body2, err := io.ReadAll(resp2.Body)
 		Expect(err).To(BeNil())
 		// Expect(body2).To(ContainSubstring("Books"))
 		Expect(body2).To(Equal(body1))
@@ -203,7 +203,7 @@ var _ = Describe("Progszy", func() {
 
 		Expect(resp1.StatusCode).To(Equal(http.StatusOK))
 
-		body1, err := ioutil.ReadAll(resp1.Body)
+		body1, err := io.ReadAll(resp1.Body)
 		Expect(err).To(BeNil())
 		Expect(body1).To(ContainSubstring("Books"))
 
@@ -222,7 +222,7 @@ var _ = Describe("Progszy", func() {
 
 		Expect(resp2.StatusCode).To(Equal(http.StatusOK))
 
-		body2, err := ioutil.ReadAll(resp2.Body)
+		body2, err := io.ReadAll(resp2.Body)
 		Expect(err).To(BeNil())
 		// Expect(body2).To(ContainSubstring("Books"))
 		Expect(body2).To(Equal(body1))
@@ -248,7 +248,7 @@ var _ = Describe("Progszy", func() {
 
 		Expect(resp1.StatusCode).To(Equal(http.StatusOK))
 
-		body1, err := ioutil.ReadAll(resp1.Body)
+		body1, err := io.ReadAll(resp1.Body)
 		Expect(err).To(BeNil())
 		Expect(body1).To(ContainSubstring("Books"))
 

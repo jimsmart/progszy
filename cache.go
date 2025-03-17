@@ -6,7 +6,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"io"
-	"io/ioutil"
 	"log"
 	"net"
 	"net/url"
@@ -72,7 +71,7 @@ func (r *CacheRecord) Body() (io.ReadCloser, error) {
 	if err != nil {
 		return nil, err
 	}
-	return ioutil.NopCloser(bytes.NewReader(body)), nil
+	return io.NopCloser(bytes.NewReader(body)), nil
 }
 
 const logCompressionStats = false

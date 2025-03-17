@@ -1,7 +1,7 @@
 package progszy_test
 
 import (
-	"io/ioutil"
+	"io"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -139,7 +139,7 @@ var _ = Describe("Cache", func() {
 			r, err := cr.Body()
 			Expect(err).To(BeNil())
 			defer r.Close()
-			b, err := ioutil.ReadAll(r)
+			b, err := io.ReadAll(r)
 			Expect(err).To(BeNil())
 			Expect(b).To(Equal(content))
 			err = c.CloseAll()
