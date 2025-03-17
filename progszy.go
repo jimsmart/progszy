@@ -15,7 +15,8 @@ import (
 
 	cleanhttp "github.com/hashicorp/go-cleanhttp"
 	retryablehttp "github.com/hashicorp/go-retryablehttp"
-	goproxy "gopkg.in/elazarl/goproxy.v1"
+
+	"github.com/elazarl/goproxy"
 )
 
 // See https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching
