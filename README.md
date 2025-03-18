@@ -217,6 +217,7 @@ progszy is copyright 2020–2025 by Jim Smart and released under the [BSD 3-Clau
 
 ## History
 
+- v0.0.17 (2025-03-18) Version bump.
 - v0.0.16 (2025-03-18) Updated dependencies.
 - v0.0.15 (2022-12-16) Updated dependencies.
 - v0.0.14 (2022-02-03) Improved documentation.
