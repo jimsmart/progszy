@@ -112,9 +112,9 @@ builds:
 #     - README.md
 #     - LICENSE.md
 archives:
-  - id: packaging
+  - id: default
     # name_template: "{{.ProjectName}}_{{.Version}}_{{.Os}}_{{.Arch}}{{ if .Arm }}v{{ .Arm }}{{ end }}"
-  - format_overrides:
+    format_overrides:
       - goos: windows
         formats: 'zip'
 checksum:
