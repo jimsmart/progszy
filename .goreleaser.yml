@@ -1,3 +1,4 @@
+version: 2
 # project_name: progszy_extended
 before:
   hooks:
@@ -86,9 +87,9 @@ builds:
   goarch:
     - arm
   goarm:
-    - 5
-    - 6
-    - 7
+    - '5'
+    - '6'
+    - '7'
 # archives:
 #   format: tar.gz
 #   format_overrides:
