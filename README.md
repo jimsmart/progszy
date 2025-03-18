@@ -213,10 +213,11 @@ Packages used by progszy (and their licensing):
 
 ## License
 
-progszy is copyright 2020–2022 by Jim Smart and released under the [BSD 3-Clause License](LICENSE.md).
+progszy is copyright 2020–2025 by Jim Smart and released under the [BSD 3-Clause License](LICENSE.md).
 
 ## History
 
+- v0.0.16 (2025-03-18) Updated dependencies.
 - v0.0.15 (2022-12-16) Updated dependencies.
 - v0.0.14 (2022-02-03) Improved documentation.
 - v0.0.12 (2022-02-03) Increase maxBodySize to 512mb. Cleanups.
