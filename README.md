@@ -1,12 +1,12 @@
-# progszy
+# Progszy
 
 [![BSD3](https://img.shields.io/badge/license-BSD3-blue.svg?style=flat)](LICENSE.md)
 [![Build Status](https://github.com/jimsmart/progszy/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/jimsmart/progszy/actions/workflows/build.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/jimsmart/progszy)](https://goreportcard.com/report/github.com/jimsmart/progszy)
-[![Godoc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://godoc.org/github.com/jimsmart/progszy)
+[![Go Reference](https://img.shields.io/badge/-reference-277d9c?&logo=go&logoColor=fafafa&labelColor=5c5c5c)](https://pkg.go.dev/github.com/jimsmart/progszy/)
 <!-- [![codecov](https://codecov.io/gh/jimsmart/progszy/branch/master/graph/badge.svg)](https://codecov.io/gh/jimsmart/progszy) -->
 
-progszy is a hard-caching HTTP(S) proxy server (with programmatic cache management), designed for use as part of a data-scraping pipeline.
+Progszy is a hard-caching HTTP(S) proxy server (with programmatic cache management), designed for use as part of a data-scraping pipeline.
 
 - Brings stable reproducability to web data-scraping pipelines.
 - Improves web scraper development workflow, via fast controlled caching of HTTP responses.
@@ -18,7 +18,7 @@ It is both a standalone executable CLI program, and a Go package.
 
 It is **not** suitable for use as a regular HTTP(S) caching proxy for humans surfing with web browsers.
 
-progszy should work with any HTTP client, but currently has only been tested with Go's http.Client.
+Progszy should work with any HTTP client, but currently has only been tested with Go's http.Client.
 
 ## Caching
 
@@ -32,7 +32,7 @@ We may review/change this binning/naming strategy at a later date.
 
 ### Caching Strategy
 
-progszy *intentionally* makes **no** use of HTTP headers relating to cached content control that are normally utilised by browsers and other caching proxies.
+Progszy *intentionally* makes **no** use of HTTP headers relating to cached content control that are normally utilised by browsers and other caching proxies.
 
 The body content and appropriate headers for all `200 Ok` responses are hard-cached — unless the body matches a given filter (see `X-Cache-Reject`, below).
 
@@ -42,19 +42,19 @@ Cache eviction/management is manual-only at present. Later we will add a REST AP
 
 ## HTTP(S) Proxy
 
-The CLI version of progszy operates as a standalone HTTP(S) proxy server. By default it listens on port 5595, for which the client's proxy configuration URL would be `http://127.0.0.1:5595`. It should be noted that currently progszy binds only to IP 127.0.0.1, which is not suitable for access from a remote IP (without the use of an SSH tunnel).
+The CLI version of Progszy operates as a standalone HTTP(S) proxy server. By default it listens on port 5595, for which the client's proxy configuration URL would be `http://127.0.0.1:5595`. It should be noted that currently Progszy binds only to IP 127.0.0.1, which is not suitable for access from a remote IP (without the use of an SSH tunnel).
 
 Incoming requests can be either vanilla HTTP, or can be HTTPS (using `CONNECT` protocol).
 
-When proxying HTTPS requests, the connection is intercepted by a man-in-the-middle (MITM) hijack, to allow both caching and the application of rules, and the resulting outbound stream is then re-encrypted using a private certificate, before being passed to the client. Note that clients wishing to proxy HTTPS requests using progszy will need specific configuration to prevent/ignore the resulting certificate mismatch errors caused by this process. See tests for an example of how this is done in Go.
+When proxying HTTPS requests, the connection is intercepted by a man-in-the-middle (MITM) hijack, to allow both caching and the application of rules, and the resulting outbound stream is then re-encrypted using a private certificate, before being passed to the client. Note that clients wishing to proxy HTTPS requests using Progszy will need specific configuration to prevent/ignore the resulting certificate mismatch errors caused by this process. See tests for an example of how this is done in Go.
 
 Outgoing HTTP requests utilise automatic retries with exponential backoff. Internal HTTP clients use a shared transport with pooling, and support upstream proxy chaining. Connections are not explicitly rate-limited.
 
-Currently, progszy only supports HTTP `GET`, `HEAD` and `CONNECT` methods. Note that support for the `HEAD` method is not actually particularly useful in this context, and really only exists for spec compliance.
+Currently, Progszy only supports HTTP `GET`, `HEAD` and `CONNECT` methods. Note that support for the `HEAD` method is not actually particularly useful in this context, and really only exists for spec compliance.
 
 ### HTTP Headers
 
-progszy makes use of custom HTTP `X-*` headers to both control features and report status to the client.
+Progszy makes use of custom HTTP `X-*` headers to both control features and report status to the client.
 
 #### Request Headers
 
@@ -84,7 +84,7 @@ First, ensure you have a working Go environment. See [Go 'Getting Started' docum
 
 Then fetch the code, build and install the binary:
 
-```bash
+```text
 go get github.com/jimsmart/progszy/cmd/progszy
 ```
 
@@ -92,11 +92,11 @@ By default, the resulting binary executable will be `~/go/bin/progszy` (assuming
 
 ## Usage Examples
 
-Once built/installed, progszy can be invoked via the command line, as follows...
+Once built/installed, Progszy can be invoked via the command line, as follows...
 
 Get help / usage instructions:
 
-```bash
+```text
 $ ./progszy --help
 Usage of ./progszy:
   -cache string
@@ -107,9 +107,9 @@ Usage of ./progszy:
         Upstream HTTP(S) proxy URL (e.g. "http://10.0.0.1:8080")
 ```
 
-Run progszy with default settings:
+Run Progszy with default settings:
 
-```bash
+```text
 $ ./progszy
 Cache location /<path-to-current-folder>/cache
 Listening on port 5595
@@ -117,14 +117,14 @@ Listening on port 5595
 
 Run using custom configuration:
 
-```bash
+```text
 $ ./progszy -port=8080 -cache=/foo/bar/store -proxy=http://10.10.0.1:9000
 Cache location /foo/bar/store
 Upstream proxy http://10.10.0.1:9000
 Listening on port 8080
 ```
 
-Press <kbd>control</kbd>+<kbd>c</kbd> to halt execution — progszy will attempt to cleanly complete any in-flight connections before exiting.
+Press <kbd>control</kbd>+<kbd>c</kbd> to halt execution — Progszy will attempt to cleanly complete any in-flight connections before exiting.
 
 ## Developer Information
 
@@ -136,7 +136,7 @@ GoDocs [https://godoc.org/github.com/jimsmart/progszy](https://godoc.org/github.
 
 Change folder to project root, and run:
 
-```bash
+```text
 godoc -http=:6060 -notes="BUG|TODO"
 ```
 
@@ -148,7 +148,7 @@ To run the tests execute `go test` inside the project root folder.
 
 For a full coverage report, try:
 
-```bash
+```text
 go test -coverprofile=coverage.out && go tool cover -html=coverage.out
 ```
 
@@ -180,7 +180,7 @@ First, go to this repo's [Actions page](https://github.com/jimsmart/progszy/acti
 
 Once the 'dummy release' action workflow completes ok, then make a version-tagged push to the repo, using a command similar to:
 
-```bash
+```text
 git tag v0.0.1 && git push origin v0.0.1
 ```
 
@@ -196,7 +196,7 @@ On successful completion of the 'release' workflow execution, go to the repo's [
 
 ### Project Dependencies
 
-Packages used by progszy (and their licensing):
+Packages used by Progszy (and their licensing):
 
 - SQLite driver [https://github.com/mattn/go-sqlite3](https://github.com/mattn/go-sqlite3) (MIT license)
   - SQLite database [https://www.sqlite.org/](https://www.sqlite.org) (Public Domain, explicit)
@@ -213,7 +213,7 @@ Packages used by progszy (and their licensing):
 
 ## License
 
-progszy is copyright 2020–2025 by Jim Smart and released under the [BSD 3-Clause License](LICENSE.md).
+Progszy is copyright 2020–2025 by Jim Smart and released under the [BSD 3-Clause License](LICENSE.md).
 
 ## History
 
