@@ -95,7 +95,7 @@ builds:
 #   format_overrides:
 #     - goos: windows
 #       format: zip
-#   name_template: "{{.ProjectName}}_{{.Version}}_{{.Os}}-{{.Arch}}"
+#   name_template: "{{.ProjectName}}_{{.Version}}_{{.Os}}-{{.Arch}}{{ if .Arm }}v{{ .Arm }}{{ end }}"
 #   replacements:
 #     amd64: 64bit
 #     386: 32bit
@@ -112,21 +112,11 @@ builds:
 #     - README.md
 #     - LICENSE.md
 archives:
+  - id: packaging
+    name_template: "{{.ProjectName}}_{{.Version}}_{{.Os}}-{{.Arch}}{{ if .Arm }}v{{ .Arm }}{{ end }}"
   - format_overrides:
       - goos: windows
         format: zip
-    replacements:
-      amd64: 64bit
-      386: 32bit
-      arm: ARM
-      arm64: ARM64
-      darwin: macOS
-      linux: Linux
-      windows: Windows
-      openbsd: OpenBSD
-      netbsd: NetBSD
-      freebsd: FreeBSD
-      dragonfly: DragonFlyBSD
 checksum:
   name_template: 'checksums.txt'
 changelog:
