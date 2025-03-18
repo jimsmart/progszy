@@ -44,27 +44,30 @@ jobs:
     - name: Install dependencies
       run: |
         go version
-        go install golang.org/x/lint/golint@latest
         go get -t -v ./...
 
     # Build project
     - name: Build project
       run: go build ./...
       
-    # Run go vet & golint
+    # Run go vet
     - name: Run go vet
       run: go vet ./...
-    - name: Run golint
-      run: golint ./...
         
+    # Run staticcheck
+    - name: Run staticcheck
+      uses: dominikh/staticcheck-action@v1.3.1
+      with:
+        version: latest
+        install-go: false
+
     # Run tests
     - name: Run tests
       run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
 
-    # # Upload coverage report to Codecov
-    # - name: Report to Codecov
-    #   uses: codecov/codecov-action@v1.4.1
+    # - name: Upload coverage reports to Codecov
+    #   uses: codecov/codecov-action@v5
     #   with:
-    #     file: ./coverage.txt
-    #     # fail_ci_if_error: true # optional (default = false)
-      
+    #     token: ${{ secrets.CODECOV_TOKEN }}
+    #     files: ./coverprofile.out
+    #     # fail_ci_if_error: true # optional (default = false)      
